@@ -1,5 +1,4 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Torre dos Arcanos</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Torre dos Arcanos</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&display=swap">
 <style>
@@ -274,6 +273,70 @@ h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;letter-spacing:.05e
 .nextopp .mini .art{width:30px}
 @media(prefers-reduced-motion:reduce){.rung.cur{animation:none}}
 
+
+/* v11: tiles, karma, embate, tower extras */
+.gcols,.shopbar{grid-template-columns:minmax(0,1fr) 380px}
+@media(max-width:980px){.gcols,.shopbar{grid-template-columns:minmax(0,1fr)}}
+.tiles{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:6px;padding:0;height:auto;justify-content:stretch}
+@media(max-width:700px){.tiles{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.shopbar .shop{padding-top:4px}
+.tile{position:relative;display:block;width:100%;aspect-ratio:5/4;border:2px solid currentColor;border-radius:4px;overflow:hidden;background:linear-gradient(165deg,#e3d6b2,#b9a778);padding:0;cursor:pointer;container-type:inline-size;text-align:left;transition:transform .15s,filter .15s;font:inherit}
+.tile.empty{background:none;border:1px dashed var(--line);cursor:default}
+.tile .pic{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:1cqw;color:#4a1a14}
+.tile .tfs{font-size:16cqw;line-height:1}
+.tile .tfb{font-family:var(--display);font-weight:700;font-size:26cqw;line-height:1}
+.tile .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 36%;transform:scale(1.2);transform-origin:50% 36%}
+.tile .nmb{position:absolute;left:0;right:0;bottom:0;z-index:3;background:rgba(18,17,13,.9);color:var(--bone);font-family:var(--display);font-size:max(8px,8.4cqw);line-height:1.1;padding:2px 4px;letter-spacing:.02em;overflow:hidden;max-height:2.4em;text-align:center}
+.tile .nmb em{font-style:normal;color:var(--gold)}
+.tile .pr{position:absolute;right:3%;top:5%;z-index:4;background:var(--ink);border:2px solid var(--gold);color:var(--gold);font-family:var(--num);font-weight:700;font-size:max(10px,12cqw);line-height:1;padding:.25em .5em;border-radius:50%}
+.tile .sg{position:absolute;left:3%;top:5%;z-index:4;background:var(--ink);border:1px solid var(--gold-d);color:var(--bone);font-size:max(11px,13cqw);line-height:1;padding:.15em .3em;border-radius:50%}
+.tile[data-id]:hover:not(:disabled){transform:translateY(-4px);z-index:5}
+.tile:disabled{filter:grayscale(.7) brightness(.75);cursor:not-allowed}
+.tile.sel{outline:2px solid var(--gold);outline-offset:1px}
+.karma{display:flex;align-items:center;gap:10px;padding:6px 8px}
+.karma .face{width:46px}
+.kbar{position:relative;flex:1;height:24px;background:#0b0a07;border:2px solid var(--gold-d);overflow:hidden;box-shadow:inset 0 0 0 1px #000}
+.kbar i{position:absolute;inset:0 auto 0 0;background:linear-gradient(#b27ae6,#5b2a8f 60%,#3d1a66);transition:width .9s ease;overflow:hidden}
+.kbar i::before,.kbar i::after{content:'';position:absolute;inset:0;background-repeat:repeat}
+.kbar i::before{background-image:radial-gradient(circle,#fff1b8 0 1.3px,transparent 2.2px),radial-gradient(circle,#ffd45c 0 1px,transparent 2px);background-size:44px 24px,29px 24px;background-position:0 4px,11px 14px;animation:drift 2.6s linear infinite,twk 1.1s ease-in-out infinite alternate}
+.kbar i::after{background-image:radial-gradient(circle,#fff 0 .8px,transparent 1.6px),radial-gradient(circle,#f3c24a 0 1.2px,transparent 2.2px);background-size:61px 24px,37px 24px;background-position:20px 9px,5px 3px;animation:drift2 3.4s linear infinite,twk 1.7s ease-in-out infinite alternate-reverse}
+@keyframes drift{to{background-position:44px 4px,40px 14px}}
+@keyframes drift2{to{background-position:81px 9px,42px 3px}}
+@keyframes twk{from{opacity:.25}to{opacity:1}}
+.kbar .kt{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--num);font-weight:700;font-size:.85rem;color:#fff;text-shadow:0 1px 3px #000;z-index:2}
+.embate{position:fixed;inset:0;display:grid;place-items:center;pointer-events:none;z-index:70;font-family:var(--display);font-size:clamp(2.4rem,10vw,6rem);color:var(--gold);text-shadow:0 4px 30px #000,0 0 30px rgba(201,162,74,.5);letter-spacing:.14em;text-transform:uppercase;animation:efade 2.2s ease forwards}
+@keyframes efade{0%{opacity:0;transform:scale(.92)}20%{opacity:1;transform:scale(1)}70%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
+.tw-r{display:grid;gap:20px;min-width:0}
+@media(max-width:820px){.tw .tw-r{order:-1}.tw .nextopp{order:0}}
+button.rung{font:inherit;color:inherit;text-align:left;width:100%;cursor:pointer}
+button.rung:hover{border-color:var(--gold-d)}
+.rung.selr{outline:2px solid var(--gold-d);outline-offset:1px}
+.rung.locked{opacity:.6}
+.face.lock{background:linear-gradient(165deg,#2a2820,#14130f)}
+.face.lock .fb{color:var(--ash)}
+.statusw{padding:16px;display:grid;gap:12px}
+.sw-h{display:flex;gap:14px;align-items:center}
+.sw-t{display:grid;gap:6px;min-width:0}
+.sw-t h3{font-size:.95rem;color:var(--gold)}
+.slots{display:flex;gap:8px}
+.slot{width:48px;aspect-ratio:2/3;border:1px dashed var(--line);display:grid;place-items:center;font-size:.7rem;color:var(--ash)}
+.slot.on{border:0}.slot .art{width:100%;border-width:1px}
+.slot .art .fname{display:none}.slot .art .fnum{font-size:44cqw}.slot .art .fbk::before,.slot .art .fbk::after{display:none}
+.own{display:grid;gap:8px;max-height:260px;overflow:auto}
+.orow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:6px 8px;border:1px solid var(--line);background:var(--panel2)}
+.orow.on{border-color:var(--gold)}
+.orow .ot{display:grid;line-height:1.15;min-width:0}
+.orow .ot b{font-family:var(--display);font-size:.8rem}
+.album figure.ok{cursor:zoom-in}
+.album figure.ok:hover .art{outline:2px solid var(--gold)}
+.lbx{position:fixed;inset:0;z-index:90;background:rgba(8,7,5,.95);display:grid;place-items:center;overflow:auto;padding:54px 16px 40px}
+.lbx.full{place-items:start}
+.lbclose{position:fixed;top:12px;right:14px;z-index:92}
+.lbs{cursor:zoom-in;max-width:none}
+.lbimg{max-width:min(96vw,1300px);max-height:calc(100svh - 110px);display:block;border:2px solid var(--gold-d);box-shadow:0 10px 40px #000}
+.lbx.full .lbimg{max-width:none;max-height:none;cursor:zoom-out}
+.lbart{width:min(360px,90vw)}
+.lbh{position:fixed;left:0;right:0;bottom:10px;text-align:center;z-index:91;pointer-events:none}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -378,7 +441,7 @@ for(const k in MAJSIGN)MJ[k].sign=MAJSIGN[k];
 const MJU={};
 for(const id in MJ){const m=MJ[id];MJU['M:'+id]={id:'M:'+id,s:m.suit,n:m.pt,r:m.num,c:0,major:true,mid:id,sign:m.sign||null,...m.u}}
 const defOf=id=>id.startsWith('M:')?MJU[id]:UB[id];
-const artOf=id=>id.startsWith('M:')?'assets/'+MJ[id.slice(2)].slug+'.jpeg':'assets/'+SL(UB[id].n)+'.jpeg';
+const artOf=id=>id.startsWith('M:')?'assets/'+MJ[id.slice(2)].slug:'assets/'+SL(UB[id].n);
 const PRIZE_POOL=Object.keys(MJ).filter(k=>k!=='fool'&&k!=='mundo');
 
 const ACTS=[
@@ -388,7 +451,10 @@ const ACTS=[
  {n:'Ato IV',t:'O Trono do Mundo',sub:'Onde tudo começou.',duels:['carro','forca','mundo']}
 ];
 const TOTAL=ACTS.reduce((a,x)=>a+x.duels.length,0);
+const FLOORS=[];ACTS.forEach((a,ai)=>a.duels.forEach((d,si)=>FLOORS.push({opp:d,act:ai,st:si})));
+const KARMA=10,EQUIPMAX=3;
 // Chance de cada nível (tier) aparecer na loja: começa quase só nos baratos e inverte a cada duelo.
+const shopLevel=S=>S.fl*0.6+(S.embate-1)*1.2;
 function tierW(g){const t3=clamp(5*g-10,0,70),t1=clamp(82-5*g,8,82);return[t1,Math.max(0,100-t1-t3),t3]}
 const POOLN=9;
 
@@ -409,21 +475,30 @@ function dialogue(oid){
  ];
 }
 
+const hasFx=id=>Object.keys(MJ[id].fx).length>0;
 function newState(meta){
- const S={act:0,st:0,g:0,majors:['fool'],ups:{...meta.ups},uid:1,gold:0,board:Array(BOARDN).fill(null),bench:Array(9).fill(null),shop:[],pool:{},
-  phase:'enc',wager:null,opp:null,plan:null,duels:0,won:0};
+ const S={act:0,st:0,g:0,fl:0,majors:['fool'],equip:[],ups:{...meta.ups},uid:1,gold:0,board:Array(BOARDN).fill(null),bench:Array(9).fill(null),shop:[],pool:{},
+  phase:'enc',wager:null,opp:null,plan:null,duels:0,won:0,karma:{me:KARMA,foe:KARMA},embate:1,abil:[]};
  const pool=shuffle(PRIZE_POOL);
  for(let i=0;i<(meta.ups.start||0);i++)S.majors.push(pool[i]);
+ S.equip=S.majors.filter(k=>k!=='fool'&&hasFx(k)).slice(0,EQUIPMAX);
  S.opp=ACTS[0].duels[0];
  return S;
 }
-function getMods(S){
+function toggleEquip(S,id){
+ if(S.equip.includes(id)){S.equip=S.equip.filter(x=>x!==id);return null}
+ if(!S.majors.includes(id)||!hasFx(id))return'Este Arcano não tem bônus para equipar.';
+ if(S.equip.length>=EQUIPMAX)return'Máximo de '+EQUIPMAX+' bônus equipados.';
+ S.equip.push(id);return null;
+}
+function sumFx(ids){
  const m={atk:0,hp:0,cd:0,crit:0,dr:0,regen:0,kh:0,sh:0,mana:0,ls:0,th:0,sp:0,dodge:0};
- for(const id of S.majors){const f=MJ[id].fx;for(const k in f)m[k]=(m[k]||0)+f[k]}
+ for(const id of ids){const f=MJ[id].fx;for(const k in f)m[k]=(m[k]||0)+f[k]}
  return m;
 }
+const getMods=S=>sumFx(S.equip);
 const boardCount=S=>S.board.filter(Boolean).length;
-const duelGold=S=>12+3*S.g+2*S.ups.gold;
+const embateGold=S=>S.embate<=1?10+2*S.fl+2*S.ups.gold:6+S.fl+S.ups.gold;
 const shopSize=S=>5+(S.ups.shop||0);
 const rerollCost=S=>Math.max(1,2-(S.ups.rr||0));
 
@@ -465,7 +540,7 @@ function computeSyn(S){
 }
 function rollShop(S){
  for(const id of S.shop)if(id)S.pool[id]++;
- const w=tierW(S.g);S.shop=[];
+ const w=tierW(shopLevel(S));S.shop=[];
  for(let i=0;i<shopSize(S);i++){
   const r=rnd(100);let t=1;if(r>=w[0]){t=2;if(r>=w[0]+w[1])t=3}
   let ids=MINORS.filter(u=>u.c===t&&S.pool[u.id]>0);
@@ -524,9 +599,12 @@ function prizeOptions(S){
 }
 function betOptions(S){const o=S.majors.filter(k=>k!=='fool');return o.length?o:['fool']}
 function initPrep(S){
- S.gold=duelGold(S);S.board.fill(null);S.bench.fill(null);S.uid=1;
- S.board[1*COLS+3]={uid:S.uid++,id:'M:'+S.wager.bet,star:1};
+ S.karma={me:KARMA,foe:KARMA};S.embate=1;S.gold=embateGold(S);S.board.fill(null);S.bench.fill(null);S.uid=1;
+ S.abil=shuffle(ACTS[FLOORS[S.fl].act].duels.filter(d=>d!==S.opp)).slice(0,2);
  S.plan=makePlan(S);S.pool=Object.fromEntries(MINORS.map(u=>[u.id,POOLN]));S.shop=[];rollShop(S);S.phase='prep';
+}
+function nextEmbate(S){
+ S.embate++;S.gold+=embateGold(S);S.plan=makePlan(S);rollShop(S);S.phase='prep';
 }
 const SPREAD={0:[],1:[3],2:[2,5],3:[1,3,6],4:[1,2,5,6],5:[0,2,3,5,7]};
 function layout(list){
@@ -536,10 +614,10 @@ function layout(list){
 }
 function makeMinor(id,star,sc){const b=UB[id],m=STAR[star-1];return{id,star,hp:b.hp*m*sc,atk:b.atk*m*sc}}
 function makePlan(S){
- const oid=S.opp,g=S.g,m=MJ[oid];
+ const oid=S.opp,g=S.fl,m=MJ[oid];
  const n=clamp(1+Math.floor(g*.22),1,3);
  const pool=MINORS.filter(u=>u.c<=(g<3?2:3));
- const sc=1+0.055*g;
+ const eb=1+0.07*(S.embate-1),sc=(0.85+0.028*g)*eb;
  const list=[];
  for(let i=0;i<n;i++){
   const s=Math.random()<.7?m.suit:pick(['W','C','S','P']);
@@ -551,12 +629,12 @@ function makePlan(S){
   list.push(makeMinor(u.id,star,sc));
  }
  layout(list);
- let hpMul=oid==="mundo"?2.2:1.5+0.065*g,atkMul=1+0.025*g;
+ let hpMul=oid==="mundo"?1.0:0.8+0.025*g,atkMul=0.5+0.012*g;
  const owned=S.majors.length-1;
  if(oid==='mundo')hpMul*=Math.max(.5,1-.04*owned);
  if(oid==='justica')atkMul*=1+.1*owned;
- const boss={bid:oid,hp:m.u.hp*hpMul,atk:m.u.atk*atkMul,x:oid==='enamorados'?2:3,y:0};
- return{units:list,boss,mech:m.md,opp:oid,suit:m.suit};
+ const boss={bid:oid,hp:m.u.hp*hpMul*eb,atk:m.u.atk*atkMul*eb,x:oid==='enamorados'?2:3,y:0};
+ return{units:list,boss,mech:m.md,opp:oid,suit:m.suit,abil:S.abil.slice()};
 }
 
 let UID=1;
@@ -590,6 +668,10 @@ function buildEnemies(plan){
  const mk=(x,y,hp)=>mkUnit({id:bd.id,s:bd.s,n:bd.n,r:bd.r,star:1,team:1,x,y,hp,maxhp:hp,atk:plan.boss.atk,rng:bd.rng,cd:bd.cd,sp:bd.sp,pw:bd.pw,manaMax:100,mana:30,mv:5,boss:true,crit:.1,art:artOf(bd.id)});
  if(mj_.mech==='twin'){out.push(mk(2,0,plan.boss.hp*.55));out.push(mk(5,0,plan.boss.hp*.55))}
  else out.push(mk(plan.boss.x,plan.boss.y,plan.boss.hp));
+ const am=sumFx(plan.abil||[]);for(const k in am)am[k]*=0.5;
+ for(const e of out){
+  e.atk*=1+am.atk;e.hp*=1+am.hp;e.maxhp=e.hp;e.cd*=1-clamp(am.cd,0,.6);e.crit+=am.crit;e.dr=clamp(e.dr+am.dr,0,.6);e.regen+=am.regen;e.sh+=e.hp*am.sh;e.ls+=am.ls;e.th+=am.th;e.dodge+=am.dodge;e.spm+=am.sp;e.mana+=e.manaMax*am.mana;
+ }
  for(const e of out){
   if(mj_.mech==='garden')e.regen=.015;
   if(mj_.mech==='order')e.sh=e.maxhp*.25;
@@ -716,10 +798,10 @@ class Sim{
     if(t%10===0&&boss){boss.atk*=1.03;this.dmg(null,boss,boss.maxhp*.012,{spell:1,sure:1})}
     break;
    case'touch':
-    if(t%70===0&&t>0){for(const a of P){a.sh=0;a.mana=0;this.dmg(boss,a,a.maxhp*.1,{spell:1,sure:1})}this.ev.push({k:'banner',s:'O Toque'})}
+    if(t%70===0&&t>0){for(const a of P){a.sh=0;a.mana=0;this.dmg(boss,a,a.maxhp*.04,{spell:1,sure:1})}this.ev.push({k:'banner',s:'O Toque'})}
     break;
    case'corrupt':
-    if(t%80===0&&t>0&&P.length){const v=pick(P);v.sh=0;v.atk*=.8;this.ev.push({k:'txt',u:v.uid,s:'Corrompido'})}
+    if(t%100===0&&t>0&&P.length){const v=pick(P);v.sh=0;v.atk*=.9;this.ev.push({k:'txt',u:v.uid,s:'Corrompido'})}
     break;
    case'collapse':
     if(t%40===0){this.hz.push({x:rnd(COLS),until:t+50});this.ev.push({k:'hz'})}
@@ -727,15 +809,15 @@ class Sim{
    case'clones':
     if(t===2||(!this.phase2&&boss&&boss.hp<boss.maxhp*.5)){
      if(t!==2)this.phase2=true;
-     const top=P.slice().sort((a,b)=>b.atk-a.atk).slice(0,t===2?3:2);
-     for(const p of top){const c=this.freeNear([1,6,3,4,0,7,2,5],[1,0,2]);if(c)this.spawn(mkUnit({id:p.id,s:p.s,n:p.n,r:p.r,star:p.star,team:1,x:c.x,y:c.y,hp:p.maxhp*.65,maxhp:p.maxhp*.65,atk:p.atk*.65,rng:p.rng,cd:p.cd,sp:p.sp,pw:p.pw,manaMax:p.manaMax,mv:p.mv,ghost:true,art:p.art}))}
+     const top=P.slice().sort((a,b)=>b.atk-a.atk).slice(0,t===2?2:1);
+     for(const p of top){const c=this.freeNear([1,6,3,4,0,7,2,5],[1,0,2]);if(c)this.spawn(mkUnit({id:p.id,s:p.s,n:p.n,r:p.r,star:p.star,team:1,x:c.x,y:c.y,hp:p.maxhp*.5,maxhp:p.maxhp*.5,atk:p.atk*.5,rng:p.rng,cd:p.cd,sp:p.sp,pw:p.pw,manaMax:p.manaMax,mv:p.mv,ghost:true,art:p.art}))}
      this.ev.push({k:'banner',s:'Ilusões'})}
     break;
    case'trumpet':
-    if(t%80===0&&t>0){const k=1+owned;for(const a of P)this.dmg(boss,a,a.maxhp*.012*k,{spell:1,sure:1});this.ev.push({k:'banner',s:'A Trombeta'})}
+    if(t%80===0&&t>0){const k=1+owned;for(const a of P)this.dmg(boss,a,a.maxhp*.007*k,{spell:1,sure:1});this.ev.push({k:'banner',s:'A Trombeta'})}
     break;
    case'wail':
-    if(t%60===0&&t>0){for(const a of P)this.dmg(boss,a,a.maxhp*.06,{spell:1,sure:1});this.ev.push({k:'banner',s:'Lamento'})}
+    if(t%60===0&&t>0){for(const a of P)this.dmg(boss,a,a.maxhp*.035,{spell:1,sure:1});this.ev.push({k:'banner',s:'Lamento'})}
     if(boss&&t%10===0)this.heal(boss,boss.maxhp*.004);
     if(t%90===0&&t>0&&boss){const c=this.freeNear([1,6,0,7,3,4],[1,0]);if(c){const b=pick(MINORS.filter(u=>u.c<=2));const sc=boss.atk/90;this.spawn(mkUnit({id:b.id,s:b.s,n:'Estilhaço',r:b.r,star:1,team:1,x:c.x,y:c.y,hp:b.hp*2.2*sc,maxhp:b.hp*2.2*sc,atk:b.atk*1.6*sc,rng:b.rng,cd:b.cd,sp:b.sp,pw:b.pw,manaMax:60,mv:4,ghost:true,art:artOf(b.id)}))}}
     if(boss&&!this.phase2&&boss.hp<boss.maxhp*.5){this.phase2=true;boss.atk*=1.4;boss.cd*=.75;this.ev.push({k:'banner',s:'Ela se despedaça'})}
@@ -779,28 +861,36 @@ function buildSim(S){
  const mech=MJ[S.plan.boss.bid].mech;
  return new Sim(buildPlayer(S),buildEnemies(S.plan),{mech,kh:m.kh,owned:S.majors.length-1});
 }
-function settle(S,sim){
- const win=sim.result==='win';const w=S.wager;
+function embateEnd(S,sim){
+ const win=sim.result==='win';
+ const surv=Math.min(MAXU,sim.alive(win?0:1).length),dmg=2*Math.max(1,surv);
+ if(win)S.karma.foe=Math.max(0,S.karma.foe-dmg);else S.karma.me=Math.max(0,S.karma.me-dmg);
+ const over=S.karma.foe<=0||S.karma.me<=0;
+ return{win,dmg,surv,over,duelWin:over?S.karma.foe<=0:null};
+}
+function finishDuel(S,win){
+ const w=S.wager;
  const out={win,prize:w.prize,bet:w.bet,gameOver:false,retry:false,final:false};
  S.duels++;
  if(win){
   S.won++;
-  if(!S.majors.includes(w.prize))S.majors.push(w.prize);
+  if(!S.majors.includes(w.prize)){S.majors.push(w.prize);if(S.equip.length<EQUIPMAX&&hasFx(w.prize))S.equip.push(w.prize)}
   if(S.opp==='mundo')out.final=true;
  }else{
-  S.majors=S.majors.filter(x=>x!==w.bet);
+  S.majors=S.majors.filter(x=>x!==w.bet);S.equip=S.equip.filter(x=>x!==w.bet);
   if(w.bet==='fool')out.gameOver=true;
   if(S.opp==='mundo')out.retry=true;
  }
  return out;
 }
 function advance(S,retry){
- if(!retry){
+ const replay=S.fl<S.g;
+ if(!retry&&!replay){
   S.st++;
   if(S.st>=ACTS[S.act].duels.length){S.act++;S.st=0}
   S.g++;
  }
- S.opp=ACTS[S.act].duels[S.st];S.wager=null;S.plan=null;S.phase='enc';
+ S.opp=ACTS[S.act].duels[S.st];S.fl=S.g;S.wager=null;S.plan=null;S.phase='enc';
 }
 const shardsFor=(S,won)=>Math.floor(S.g*2)+8*(S.majors.length-1)+(won?30:0);
 //#CORE_END
@@ -810,11 +900,11 @@ const metaDef=()=>({shards:0,ups:{gold:0,shop:0,rr:0,start:0},runs:0,wins:0,best
 let META=metaDef(),HAS_SAVE=false;
 function readSave(){try{const raw=localStorage.getItem(SKEY);if(raw)return JSON.parse(raw);const o=localStorage.getItem(OLDKEY);if(o)return{v:2,meta:JSON.parse(o),run:null}}catch(e){}return null}
 HAS_SAVE=!!readSave();
-function saveGame(){try{localStorage.setItem(SKEY,JSON.stringify({v:3,meta:META,run:S?{act:S.act,st:S.st,g:S.g,majors:S.majors,ups:S.ups,won:S.won,duels:S.duels}:null}));HAS_SAVE=true}catch(e){}}
+function saveGame(){try{localStorage.setItem(SKEY,JSON.stringify({v:3,meta:META,run:S?{act:S.act,st:S.st,g:S.g,majors:S.majors,equip:S.equip,ups:S.ups,won:S.won,duels:S.duels}:null}));HAS_SAVE=true}catch(e){}}
 function loadGame(){
  const d=readSave();if(!d)return false;const m=d.meta||{};
  META={...metaDef(),...m,ups:{...metaDef().ups,...(m.ups||{})},collection:m.collection||[]};
- if(d.run){S=newState(META);Object.assign(S,d.run);S.opp=ACTS[S.act].duels[S.st];S.phase='tower'}else S=null;
+ if(d.run){S=newState(META);Object.assign(S,d.run);S.equip=(S.equip||S.majors.filter(k=>k!=='fool'&&hasFx(k)).slice(0,EQUIPMAX)).filter(k=>S.majors.includes(k));S.fl=S.g;S.opp=ACTS[S.act].duels[S.st];S.phase='tower'}else S=null;
  return true;
 }
 const collect=id=>{if(id&&id!=='fool'&&!META.collection.includes(id))META.collection.push(id)};
@@ -827,12 +917,14 @@ function icon(s){
  const p={W:'<path d="M12 3 L21 20 H3 Z"/>',C:'<path d="M12 21 L3 4 H21 Z"/>',S:'<path d="M12 3 L21 20 H3 Z"/><path d="M7 14 H17"/>',P:'<path d="M12 21 L3 4 H21 Z"/><path d="M7 10 H17"/>',D:'<circle cx="12" cy="12" r="8"/><path d="M12 4 V20 M4 12 H20"/>'}[s]||'';
  return`<svg class="ic s-${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round">${p}</svg>`;
 }
-function cardArt(src,fb,cls=''){return`<div class="art ${cls}"><div class="fbk">${fb}</div><img src="${src}" alt="" loading="lazy"></div>`}
-function majorArt(id,cls=''){const m=MJ[id];return cardArt('assets/'+m.slug+'.jpeg',`<span class="fnum">${m.num}</span><span class="fname">${m.en}</span>`,cls)}
+const EXT=['jpeg','jpg','png','webp'],EXTC={};
+function imgT(base,cls=''){const c=EXTC[base];if(c===null)return'';return`<img class="${cls}" data-b="${base}" data-e="${c?EXT.indexOf(c):0}" src="${base}.${c||EXT[0]}" alt="">`}
+function cardArt(src,fb,cls=''){return`<div class="art ${cls}"><div class="fbk">${fb}</div>${imgT(src)}</div>`}
+function majorArt(id,cls=''){const m=MJ[id];return cardArt('assets/'+m.slug,`<span class="fnum">${m.num}</span><span class="fname">${m.en}</span>`,cls)}
 function minorArt(id,cls=''){const u=UB[id];return cardArt(artOf(id),`<span class="fsu s-${u.s}">${icon(u.s)}</span><span class="fnum">${u.r}</span><span class="fname">${u.n}</span>`,cls)}
 function utHTML(id,star){
  const d=defOf(id);
- return`<div class="ut s-${d.s}">${d.sign?`<span class="sgl">${SIGNS[d.sign].g}</span>`:''}<span class="fb ${String(d.r).length>2?'l':''}">${d.r}</span><img src="${artOf(id)}" alt=""><span class="st">${'★'.repeat(star||1)}</span></div>`;
+ return`<div class="ut s-${d.s}">${d.sign?`<span class="sgl">${SIGNS[d.sign].g}</span>`:''}<span class="fb ${String(d.r).length>2?'l':''}">${d.r}</span>${imgT(artOf(id))}<span class="st">${'★'.repeat(star||1)}</span></div>`;
 }
 function toast(m){
  let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t)}
@@ -842,10 +934,9 @@ function modal(html){$('#modal').innerHTML=`<div class="modal"><div class="sheet
 const closeModal=()=>{$('#modal').innerHTML=''};
 const stopTimer=()=>{if(timer){clearInterval(timer);timer=null}sim=null};
 
-const FLOORS=[];ACTS.forEach((a,ai)=>a.duels.forEach((d,si)=>FLOORS.push({opp:d,act:ai,st:si})));
 function face(id,cls=''){
  const m=MJ[id];
- return`<div class="face ${cls}"><span class="fb">${m.num}</span><img class="cr" src="assets/${m.slug}.jpeg" alt=""><img class="fi" src="assets/portraits/face/${m.slug}.jpeg" alt=""></div>`;
+ return`<div class="face ${cls}"><span class="fb">${m.num}</span>${imgT('assets/'+m.slug,'cr')}${imgT('assets/portraits/face/'+m.slug,'fi')}</div>`;
 }
 function showTitle(){
  stopTimer();S=null;closeModal();
@@ -894,8 +985,15 @@ function showAlbum(){
  const ids=Object.keys(MJ).filter(k=>k!=='fool');
  modal(`<h2>Baralho</h2><p class="sub">Arcanos Maiores coletados: ${META.collection.length} de 21. Vença duelos e escolha o prêmio para desbloquear cada carta.</p>
  <div class="album">${ids.map(k=>{const m=MJ[k],ok=META.collection.includes(k);
-  return`<figure>${ok?majorArt(k):`<div class="art locked"><span class="x">✕</span><span class="fname">${m.num}</span></div>`}<figcaption>${ok?m.pt:'Bloqueado'}</figcaption></figure>`}).join('')}</div>
+  return`<figure class="${ok?'ok':''}" ${ok?`data-a="zoom:${k}" title="Ver a carta inteira"`:''}>${ok?majorArt(k):`<div class="art locked"><span class="x">✕</span><span class="fname">${m.num}</span></div>`}<figcaption>${ok?m.pt:'Bloqueado'}</figcaption></figure>`}).join('')}</div>
  <div><button class="btn" data-a="close">Fechar</button></div>`);
+}
+function zoomCard(id){
+ const m=MJ[id];let lb=$('#lb');if(lb)lb.remove();
+ lb=document.createElement('div');lb.id='lb';lb.className='lbx';
+ const base='assets/'+m.slug;
+ lb.innerHTML=`<button class="btn lbclose" data-a="unzoom">Fechar ✕</button><div class="lbs" data-a="lbtoggle">${EXTC[base]===null?majorArt(id,'lbart'):imgT(base,'lbimg')}</div><div class="lbh small">${m.num} · ${m.pt}. Clique na imagem para alternar entre ajustada e tamanho original. Esc fecha.</div>`;
+ document.body.appendChild(lb);
 }
 function showShop(){
  modal(`<h2>Loja</h2><p class="sub">Em desenvolvimento. Por enquanto, aqui ficam as melhorias da Memória.</p>
@@ -908,10 +1006,11 @@ function codex(){
  modal(`<h2>Códex dos Arcanos</h2><p class="sub">Cada Arcano Maior é um deus. O Louco (0) é você, e O Mundo (XXI) é o duelo final.</p>
  <div class="card"><h3>Como jogar</h3><ol class="how">
   <li>A Torre tem 4 atos e ${TOTAL} andares, um duelo contra cada Arcano Maior.</li>
-  <li>Antes de cada duelo você escolhe um Arcano Maior como prêmio e aposta um dos seus. O Louco só pode ser apostado se for o único que você tem, e perdê-lo termina a jornada.</li>
+  <li>Antes de cada duelo você escolhe um Arcano Maior como prêmio e aposta um dos seus. Você pode revisitar andares já vencidos. O Louco só pode ser apostado se for o único que você tem, e perdê-lo termina a jornada.</li>
   <li>No duelo você compra Arcanos Menores com o ouro do duelo e posiciona até 5 unidades. As cartas não passam para o duelo seguinte.</li>
   <li>Sinergias: 3 cartas do mesmo Signo, 4 cartas de mesmo valor (uma de cada naipe) ou 5 cartas diferentes do mesmo naipe dão bônus às unidades do grupo. Água apaga Fogo, Fogo consome Ar, Ar corrói Terra, Terra absorve Água.</li>
-  <li>Cada Arcano Maior que você ganha dá um bônus permanente e luta ao seu lado quando apostado.</li></ol></div>
+  <li>Cada duelo tem vários Embates. O Louco e o oponente começam com 10 de Karma. Quem perde um Embate perde 2 de Karma por unidade que o vencedor manteve em campo. Entre os Embates você compra cartas e reposiciona, e a loja melhora.</li>
+  <li>Cada Arcano Maior que você ganha dá um bônus. Antes do duelo, equipe até 3 deles. Os Arcanos Maiores não entram em campo como peça. Já os oponentes lutam com a própria peça e mais 2 bônus de outros Arcanos do mesmo ato.</li></ol></div>
  <h2>Arcanos Maiores</h2>
  <div class="cdx">${Object.values(MJ).map(m=>`<div><small>${m.num} · ${m.en.toUpperCase()}</small><b>${m.pt} · ${m.title}</b><i>${m.pd?'Bônus: '+m.pd:''}</i><i>${m.md?'Duelo: '+m.md:'Só aparece como prêmio.'}</i></div>`).join('')}</div>
  <h2>Arcanos Menores</h2><p class="sub">52 cartas com os nomes de Aleister Crowley: do 2 ao 10 e Princesa, Príncipe, Rainha e Cavaleiro de cada naipe. A loja sorteia de um baralho com 9 cópias de cada uma. Cartas numeradas e cortes têm um Signo do Zodíaco (Thoth). Princesas não têm signo.</p>
@@ -924,32 +1023,43 @@ function startRun(){
  S=newState(META);META.runs++;S.majors.forEach(collect);sel=null;W=null;saveGame();
  showTower();
 }
-function showTower(){
+let selFloor=0;
+function equipWindow(){
+ const own=S.majors.filter(k=>k!=='fool'&&hasFx(k));
+ const slots=[0,1,2].map(i=>{const k=S.equip[i];return k?`<div class="slot on" title="${esc(MJ[k].pt)}">${majorArt(k)}</div>`:'<div class="slot"><span>vazio</span></div>'}).join('');
+ return`<div class="statusw frame"><div class="sw-h">${face('fool','md')}<div class="sw-t"><h3>O Louco</h3><span class="small">Equipe até ${EQUIPMAX} bônus de Arcanos Maiores · <b class="num">${S.equip.length}/${EQUIPMAX}</b></span><div class="slots">${slots}</div></div></div>
+ <div class="own">${own.length?own.map(k=>{const on=S.equip.includes(k);return`<div class="orow ${on?'on':''}">${face(k,'sm')}<span class="ot"><b>${MJ[k].pt}</b><span class="small">${MJ[k].pd}</span></span><button class="btn ${on?'on':''}" data-a="equip:${k}">${on?'Remover':'Equipar'}</button></div>`}).join(''):'<span class="small">Vença duelos para ganhar Arcanos Maiores e equipar os bônus deles.</span>'}</div></div>`;
+}
+function showTower(sf){
  stopTimer();closeModal();S.phase='tower';S.opp=ACTS[S.act].duels[S.st];
- const cur=S.g,m=MJ[S.opp],a=ACTS[S.act];
+ const cur=S.g;selFloor=(sf==null||sf>cur)?cur:sf;
+ const fi=FLOORS[selFloor],m=MJ[fi.opp],a=ACTS[fi.act];
  let rows='';
  for(let i=FLOORS.length-1;i>=0;i--){
   const f=FLOORS[i],fm=MJ[f.opp],st=i<cur?'done':i===cur?'cur':'next';
   if(f.st===ACTS[f.act].duels.length-1)rows+=`<div class="lh">${ACTS[f.act].n} · ${ACTS[f.act].t}</div>`;
-  rows+=`<div class="rung ${st} ${f.opp==='mundo'?'boss':''}"><span class="fl2">${i+1}</span>${face(f.opp,'sm')}<span class="nm"><b>${fm.pt}</b><span class="small">${fm.title}</span></span>${st==='cur'?`<span class="you">${face('fool','xs')}<em>Você</em></span>`:st==='done'?'<span class="ok">✓</span>':'<span></span>'}</div>`;
+  if(i>cur){rows+=`<div class="rung next locked"><span class="fl2">${i+1}</span><div class="face sm lock"><span class="fb">?</span></div><span class="nm"><b>? ? ?</b><span class="small">Andar bloqueado</span></span><span></span></div>`;continue}
+  rows+=`<button class="rung ${st}${i===selFloor?' selr':''} ${f.opp==='mundo'?'boss':''}" data-a="floor:${i}"><span class="fl2">${i+1}</span>${face(f.opp,'sm')}<span class="nm"><b>${fm.pt}</b><span class="small">${fm.title}</span></span>${st==='cur'?`<span class="you">${face('fool','xs')}<em>Você</em></span>`:'<span class="ok">✓</span>'}</button>`;
  }
  $('#app').innerHTML=`<div class="tw">
   <div class="ladderbox frame"><div class="hd" style="padding:16px 0 8px;position:relative;z-index:2">A Torre · ${TOTAL} andares</div><div class="ladder" id="ladder">${rows}</div></div>
+  <div class="tw-r">
   <div class="nextopp frame">
-   <div class="hd">Andar ${cur+1} de ${TOTAL} · ${a.n}</div>
-   ${face(S.opp,'lg')}
+   <div class="hd">Andar ${selFloor+1} de ${TOTAL} · ${a.n}${selFloor<cur?' · já vencido':''}</div>
+   ${face(fi.opp,'lg')}
    <h2>${m.pt}</h2><div class="small" style="margin-top:-6px">${m.title}</div>
    <p class="sub" style="margin:0;color:var(--parch);font-style:italic">${m.md?esc(m.md):'Um deus à sua espera.'}</p>
-   <div class="mini" title="Seus Arcanos Maiores">${S.majors.map(id=>majorArt(id)).join('')}</div>
-   <div class="row" style="justify-content:center"><button class="btn big" data-a="enter">Enfrentar</button><button class="btn ghost" data-a="lobby">Voltar ao lobby</button></div>
+   <div class="row" style="justify-content:center"><button class="btn big" data-a="enter">${selFloor<cur?'Revisitar':'Enfrentar'}</button><button class="btn ghost" data-a="lobby">Voltar ao lobby</button></div>
+  </div>
+  ${equipWindow()}
   </div></div>`;
- const L=$('#ladder'),c=$('.rung.cur');if(L&&c)L.scrollTop=Math.max(0,c.offsetTop-L.clientHeight/2+c.offsetHeight/2);
+ const L=$('#ladder'),c=$('.rung.selr');if(L&&c)L.scrollTop=Math.max(0,c.offsetTop-L.clientHeight/2+c.offsetHeight/2);
 }
 function showEncounter(){
  stopTimer();closeModal();dlgI=0;
- const a=ACTS[S.act],m=MJ[S.opp];
+ const fi=FLOORS[S.fl],a=ACTS[fi.act],m=MJ[S.opp];
  $('#app').innerHTML=`<div class="enc">
-  <div class="hd">${a.n} · ${a.t} · Duelo ${S.st+1} de ${a.duels.length}</div>
+  <div class="hd">${a.n} · ${a.t} · Duelo ${fi.st+1} de ${a.duels.length}</div>
   <div class="duel">
    <div class="side">${majorArt('fool','big l')}<div class="cap">${MJ.fool.pt}<small>${MJ.fool.title}</small></div></div>
    <div class="vs">VS</div>
@@ -969,45 +1079,56 @@ function showWager(step){
  const list=step===1?W.opts:opts;
  const fan=list.map((id,i)=>{
   const n=list.length,mid=(n-1)/2,off=i-mid;
-  const cp=`${MJ[id].pt} · ${MJ[id].pd||(step===1?'Prêmio final':'Luta ao seu lado')}`;
+  const cp=`${MJ[id].pt} · ${MJ[id].pd||(step===1?'Sem bônus':'Sem bônus')}`;
   return`<button class="fc" style="--r:${off*7}deg;--y:${Math.abs(off)*9}px" data-a="${step===1?'prize':'bet'}:${id}">${majorArt(id)}<span class="cp">${esc(cp)}</span></button>`}).join('');
  const only=step===2&&list[0]==='fool';
  $('#app').innerHTML=`<div class="wg">
-  <div class="hd">${ACTS[S.act].n} · Duelo ${S.st+1} · ${MJ[S.opp].pt}</div>
+  <div class="hd">${ACTS[FLOORS[S.fl].act].n} · Duelo ${FLOORS[S.fl].st+1} · ${MJ[S.opp].pt}</div>
   <h2>${step===1?'Escolha o prêmio':'Aposte um Arcano Maior'}</h2>
-  <p class="sub">${step===1?'Se você vencer o duelo, este Arcano Maior será seu.':(only?'Você só tem O Louco. Se perder este duelo, a jornada termina, sem continuar.':'Se perder o duelo, você perde o Arcano apostado. Ele também luta ao seu lado.')}</p>
+  <p class="sub">${step===1?'Se você vencer o duelo, este Arcano Maior será seu e você poderá equipar o bônus dele (até 3).':(only?'Você só tem O Louco. Se perder este duelo, a jornada termina, sem continuar.':'Se perder o duelo, você perde o Arcano apostado, junto com o bônus dele.')}</p>
   <div class="fan">${fan}</div>
   <div class="row" style="justify-content:center">${step===2?'<button class="btn ghost" data-a="wback">Voltar</button>':''}</div>
  </div>`;
 }
 function beginPrep(){
  initPrep(S);sel=null;buildGame();syncAll();
- banner(MJ[S.opp].pt);
+ embateText(1);
 }
 
 function buildGame(){
  $('#app').innerHTML=`<div class="gh frame nr" id="gh"></div>
  <div class="gcols frame">
-  <div class="boardwrap"><div class="board" id="board"><div class="cells" id="cells"></div><div class="divider"></div><div class="units" id="units"></div><div class="fxl" id="fxl"></div><div class="veil" id="veil"></div></div></div>
+  <div class="boardwrap"><div class="karma foe" id="kfoe"><div class="kbar"><i></i><span class="kt">10/10</span></div>${face(S.opp,'sm')}</div><div class="board" id="board"><div class="cells" id="cells"></div><div class="divider"></div><div class="units" id="units"></div><div class="fxl" id="fxl"></div><div class="veil" id="veil"></div></div><div class="karma me" id="kme">${face('fool','sm')}<div class="kbar"><i></i><span class="kt">10/10</span></div></div></div>
   <div class="panel side"><h3>Sinergias para completar</h3><div class="syn" id="syn"></div><div class="pas" id="pas"></div></div>
  </div>
  <div class="shopbar frame">
-  <div class="shopmain"><div class="sh">Banco · suas cartas compradas</div><div class="bench" id="bench"></div><div class="sh">Cartas da loja · clique para comprar</div><div class="shop" id="shop"></div></div>
+  <div class="shopmain"><div class="sh">Banco · suas cartas compradas</div><div class="bench tiles" id="bench"></div><div class="sh">Cartas da loja · clique para comprar</div><div class="shop tiles" id="shop"></div></div>
   <div class="menu" id="menu"></div>
  </div>`;
  let c='';for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++)c+=`<div data-x="${x}" data-y="${y}" class="${y>=PROW?'me':'foe'}"></div>`;
  $('#cells').innerHTML=c;
  $('#board').addEventListener('click',onBoardClick);
 }
-function syncAll(){renderHead();renderBench();renderShop();renderSyn();renderMenu();if(!sim)drawPrepUnits();updateCells()}
+function updateKarma(){
+ if(!S||!S.karma)return;
+ for(const [id,v] of [['#kfoe',S.karma.foe],['#kme',S.karma.me]]){const el=$(id);if(!el)continue;el.querySelector('i').style.width=v/KARMA*100+'%';el.querySelector('.kt').textContent=v+'/'+KARMA}
+}
+function embateText(n){
+ const d=document.createElement('div');d.className='embate';d.textContent='Embate '+n;document.body.appendChild(d);setTimeout(()=>d.remove(),2300);
+}
+function syncAll(){updateKarma();renderHead();renderBench();renderShop();renderSyn();renderMenu();if(!sim)drawPrepUnits();updateCells()}
 function renderHead(){
- const a=ACTS[S.act];
- $('#gh').innerHTML=`<b>${a.n} · ${a.t} · Duelo ${S.st+1}/${a.duels.length}</b>
+ const fi=FLOORS[S.fl],a=ACTS[fi.act];
+ $('#gh').innerHTML=`<b>${a.n} · ${a.t} · Duelo ${fi.st+1}/${a.duels.length} · Embate ${S.embate}</b>
  <div class="stk"><span>O Louco vs <b>${MJ[S.opp].pt}</b></span><span>Prêmio: <b>${MJ[S.wager.prize].pt}</b></span><span>Aposta: <b>${MJ[S.wager.bet].pt}</b></span>
- <span class="mini" title="Seus Arcanos Maiores">${S.majors.map(id=>majorArt(id)).join('')}</span></div>`;
+ <span class="mini" title="Bônus equipados">${S.equip.map(id=>majorArt(id)).join('')}</span></div>`;
+}
+function tileHTML(id,o={}){
+ const d=defOf(id),tag=o.tag||'div';
+ return`<${tag} class="tile s-${d.s} ${o.cls||''}" ${o.attrs||''} data-id="${id}" data-star="${o.star||1}"><span class="pic"><span class="tfs">${icon(d.s)}</span><span class="tfb">${d.r}</span>${imgT(artOf(id))}</span>${d.sign?`<span class="sg">${SIGNS[d.sign].g}</span>`:''}${o.price!=null?`<span class="pr">${o.price}</span>`:''}<span class="nmb">${esc(d.n)}${(o.star||1)>1?` <em>${'★'.repeat(o.star)}</em>`:''}</span></${tag}>`;
 }
 function renderBench(){
- $('#bench').innerHTML=S.bench.map((x,i)=>`<div class="bs ${sel&&sel.k==='b'&&sel.i===i?'sel':''}" data-a="bench:${i}" ${x?`data-id="${x.id}" data-star="${x.star}"`:''}>${x?utHTML(x.id,x.star):''}</div>`).join('');
+ $('#bench').innerHTML=S.bench.map((x,i)=>x?tileHTML(x.id,{star:x.star,cls:sel&&sel.k==='b'&&sel.i===i?'sel':'',attrs:`data-a="bench:${i}"`}):`<div class="tile empty" data-a="bench:${i}"></div>`).join('');
 }
 const signTxt=d=>d.sign?SIGNS[d.sign].g+' '+SIGNS[d.sign].n:'sem signo';
 const rankName=u=>RANKN[u.r]?RANKN[u.r]+' de '+SUITS[u.s].n:u.r+' de '+SUITS[u.s].n;
@@ -1017,9 +1138,10 @@ function infoHTML(d){
 }
 function renderShop(){
  $('#shop').innerHTML=S.shop.map((id,i)=>{
-  if(!id)return`<div class="sc empty"></div>`;
+  if(!id)return`<div class="tile empty"></div>`;
   const u=UB[id];
-  return`<button class="sc" data-a="buy:${i}" data-id="${id}" ${S.gold<u.c||sim||S.phase!=='prep'?'disabled':''} aria-label="${esc(u.n)}, custo ${u.c}">${minorArt(id)}${u.sign?`<span class="sg">${SIGNS[u.sign].g}</span>`:''}<span class="pr">${u.c}</span><span class="stt">${u.hp} · ${u.atk} · ${u.rng}</span></button>`}).join('');
+  return tileHTML(id,{tag:'button',price:u.c,attrs:`data-a="buy:${i}" ${S.gold<u.c||sim||S.phase!=='prep'?'disabled':''} aria-label="${esc(u.n)}, custo ${u.c}"`});
+ }).join('');
 }
 const pc=v=>Math.round(v*100);
 const FXT={atk:v=>`+${pc(v)}% de dano`,hp:v=>`+${pc(v)}% de vida`,cd:v=>`+${pc(v)}% de velocidade`,crit:v=>`+${pc(v)}% de crítico`,dr:v=>`-${pc(v)}% de dano recebido`,regen:v=>`regenera ${pc(v)}% da vida por s`,sh:v=>`escudo inicial de ${pc(v)}%`,th:v=>`reflete ${pc(v)}% do dano`,ls:v=>`${pc(v)}% de roubo de vida`,mana:v=>`+${v} de energia inicial`,heal:v=>`+${pc(v)}% de cura`,burn:()=>'queimadura',slow:()=>'retarda alvos',dodge:v=>`${pc(v)}% de esquiva`,sp:v=>`+${pc(v)}% de poder das magias`};
@@ -1045,8 +1167,8 @@ function renderSyn(){
    h+=synRow('var(--gold)','<span class="gl">'+(RANKPL[r]?'♛︎':r)+'</span>',valLabel(r),e.count,VALNEED,e.tier,[{n:VALNEED,t:fxDesc(VALFX)}],`Um de cada naipe:`)}}
  if(!h)h='<span class="small">Posicione unidades no campo. Aqui aparecem os Signos, Naipes e Valores que você está formando, e quanto falta para cada bônus.</span>';
  $('#syn').innerHTML=h;
- const pas=S.majors.filter(k=>MJ[k].pd).map(k=>`<div><b>${MJ[k].pt}</b> ${MJ[k].pd}</div>`).join('');
- $('#pas').innerHTML=`<h3 style="margin-top:6px">Bônus dos seus Arcanos</h3>${pas||'<span class="small">Ganhe Arcanos Maiores para receber bônus permanentes.</span>'}<h3 style="margin-top:6px">Mecânica do oponente</h3><div class="mech">${esc(S.plan.mech||'Sem mecânica especial.')}</div>`;
+ const pas=S.equip.map(k=>`<div><b>${MJ[k].pt}</b> ${MJ[k].pd}</div>`).join('');
+ $('#pas').innerHTML=`<h3 style="margin-top:6px">Seus bônus equipados</h3>${pas||'<span class="small">Nenhum bônus equipado. Equipe na tela da Torre.</span>'}<h3 style="margin-top:6px">Mecânica do oponente</h3><div class="mech">${esc(S.plan.mech||'Sem mecânica especial.')}</div><h3 style="margin-top:6px">Habilidades extras do oponente</h3>${S.abil.map(k=>`<div><b>${MJ[k].pt}</b> ${MJ[k].pd}</div>`).join('')||'<span class="small">Nenhuma.</span>'}`;
 }
 function prevHTML(id,star){
  const d=defOf(id),sm=STAR[(star||1)-1];
@@ -1069,7 +1191,7 @@ function renderMenu(){
  m.innerHTML=`<h3>Menu da loja</h3>
  <div class="gold">Ouro <b>${S.gold}</b><span class="small num" style="margin-left:auto">${boardCount(S)}/${MAXU} em campo</span></div>
  ${det}
- <div class="small num">Chance da loja · T1 ${tierW(S.g)[0]}% · T2 ${tierW(S.g)[1]}% · T3 ${tierW(S.g)[2]}%</div>
+ <div class="small num">Chance da loja · T1 ${tierW(shopLevel(S))[0].toFixed(0)}% · T2 ${tierW(shopLevel(S))[1].toFixed(0)}% · T3 ${tierW(shopLevel(S))[2].toFixed(0)}%</div>
  <div class="btns"><button class="btn" data-a="reroll" ${S.gold<rerollCost(S)?'disabled':''}>Atualizar · ${rerollCost(S)}</button>${x&&!isMajorInst(x)?`<button class="btn" data-a="sell">Vender · ${sellValue(x)}</button>`:''}</div>
  <button class="btn big" data-a="fight" ${boardCount(S)?'':'disabled'}>Lutar</button>`;
 }
@@ -1175,13 +1297,19 @@ function tick(){
  consume();liveSync();
  if(sim.result){
   clearInterval(timer);timer=null;
-  const out=settle(S,sim);
-  setTimeout(()=>{sim=null;S.phase='done';const v=$('#veil');if(v)v.classList.remove('on');showResult(out)},700);
+  const r=embateEnd(S,sim);updateKarma();
+  banner(r.win?`Embate vencido · Karma do oponente -${r.dmg}`:`Embate perdido · seu Karma -${r.dmg}`);
+  setTimeout(()=>{
+   const v=$('#veil');if(v)v.classList.remove('on');
+   sim=null;
+   if(r.over){S.phase='done';showResult(finishDuel(S,r.duelWin))}
+   else{nextEmbate(S);sel=null;syncAll();embateText(S.embate)}
+  },1700);
  }
 }
 function showResult(out){
  lastOut=out;
- modal(`<h2>${out.win?'Vitória':'Derrota'}</h2>
+ modal(`<h2>${out.win?'Vitória no duelo':'Derrota no duelo'}</h2><p class="sub" style="text-align:center">Karma final · Louco ${S.karma.me}/${KARMA} · ${MJ[S.opp].pt} ${S.karma.foe}/${KARMA}</p>
  <div class="resrow">${out.win?`<figure>${majorArt(out.prize)}Você ganhou ${MJ[out.prize].pt}</figure>`:`<figure>${majorArt(out.bet)}Você perdeu ${MJ[out.bet].pt}</figure>`}</div>
  <p class="sub" style="text-align:center">${out.win?(MJ[out.prize].pd?'Bônus permanente: '+MJ[out.prize].pd:''):(out.gameOver?'O Louco caiu. Não há como continuar.':(out.retry?'O Mundo ainda espera. Você terá de enfrentá-la de novo.':''))}</p>
  <div style="text-align:center"><button class="btn big" data-a="afterCombat">${out.gameOver?'Ver o fim':out.final?'Enfrentar a escolha':'Próximo duelo'}</button></div>`);
@@ -1219,7 +1347,12 @@ document.addEventListener('click',e=>{
   case'title':showTitle();break;
   case'lobby':showLobby();break;
   case'tower':S?showTower():startRun();break;
-  case'enter':showEncounter();break;
+  case'enter':S.fl=selFloor;S.opp=FLOORS[selFloor].opp;showEncounter();break;
+  case'floor':showTower(+arg);break;
+  case'equip':{const r=toggleEquip(S,arg);if(r)toast(r);saveGame();showTower(selFloor);break}
+  case'zoom':zoomCard(arg);break;
+  case'unzoom':{const l=$('#lb');if(l)l.remove();break}
+  case'lbtoggle':{const l=$('#lb');if(l)l.classList.toggle('full');break}
   case'album':showAlbum();break;
   case'shop':showShop();break;
   case'mystic':soon('Torre Mística');break;
@@ -1242,13 +1375,15 @@ document.addEventListener('click',e=>{
   case'end':closeModal();endRun(true,arg);break;
  }
 });
-document.addEventListener('error',e=>{if(e.target&&e.target.tagName==='IMG')e.target.remove()},true);
-const showInfo=e=>{const c=e.target.closest&&e.target.closest('.sc[data-id],.bs[data-id]');const el=$('#shopinfo');if(c&&el)el.innerHTML=prevHTML(c.dataset.id,+c.dataset.star||1)};
-const hideInfo=e=>{const c=e.target.closest&&e.target.closest('.sc[data-id],.bs[data-id]');const el=$('#shopinfo');if(c&&el&&!(e.relatedTarget&&c.contains(e.relatedTarget)))el.innerHTML=defPrev()};
+document.addEventListener('load',e=>{const t=e.target;if(t&&t.tagName==='IMG'&&t.dataset.b)EXTC[t.dataset.b]=EXT[+t.dataset.e]},true);
+document.addEventListener('error',e=>{const t=e.target;if(!t||t.tagName!=='IMG')return;
+ if(t.dataset.b){const n=+t.dataset.e+1;if(n<EXT.length){t.dataset.e=n;t.src=t.dataset.b+'.'+EXT[n]}else{EXTC[t.dataset.b]=null;t.remove()}}else t.remove()},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const l=$('#lb');if(l)l.remove()}});
+const showInfo=e=>{const c=e.target.closest&&e.target.closest('.tile[data-id]');const el=$('#shopinfo');if(c&&el)el.innerHTML=prevHTML(c.dataset.id,+c.dataset.star||1)};
+const hideInfo=e=>{const c=e.target.closest&&e.target.closest('.tile[data-id]');const el=$('#shopinfo');if(c&&el&&!(e.relatedTarget&&c.contains(e.relatedTarget)))el.innerHTML=defPrev()};
 document.addEventListener('mouseover',showInfo);document.addEventListener('focusin',showInfo);document.addEventListener('touchstart',showInfo,{passive:true});
 document.addEventListener('mouseout',hideInfo);document.addEventListener('focusout',hideInfo);
 window.__TA={get S(){return S},get sim(){return sim}};
 showTitle();
 </script>
-
-</body></html>
+</head><body></body></html>
