@@ -644,6 +644,29 @@ html{font-size:clamp(18px,1.1vw,24px)}
 .synov.me,.synov.foe{width:min(24%,290px)}
 .synov .sy2 b,.synov .sy2 .num,.synov .pname{font-size:.6rem!important}
 .synov .sy2 small,.synov .pnl small,.synov .mechl{font-size:.55rem!important}
+
+/* cutscene */
+.cut{position:fixed;inset:0;z-index:40;background:#000;overflow:hidden}
+.cutbg{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(90% 80% at 50% 40%,#2a2418,#050403)}
+.cutbg .cutimg{height:100%;width:auto;max-width:100%;object-fit:contain;object-position:center;filter:saturate(.95) brightness(.9)}
+.cutbg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.25),rgba(0,0,0,0) 30%,rgba(0,0,0,0) 55%,rgba(0,0,0,.78))}
+.cutinf{position:absolute;left:50%;top:30%;transform:translate(-50%,-50%);font-size:min(16vw,170px);color:#f5d98a;text-shadow:0 0 28px #e0a93a,0 0 60px #b4741c;opacity:0;pointer-events:none;font-family:serif}
+.cutinf.go{animation:cutInf 2.4s ease-in-out both}
+@keyframes cutInf{0%{opacity:0;transform:translate(-50%,-30%) scale(.7)}25%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-70%) scale(1.15)}}
+.cutbox{position:absolute;left:50%;bottom:4svh;transform:translateX(-50%) translateY(12px);width:min(1100px,92vw);min-height:190px;padding:18px 28px 22px;background:rgba(14,11,7,.9);border:2px solid var(--gold-d);box-shadow:0 0 0 3px rgba(0,0,0,.6),0 10px 40px rgba(0,0,0,.7);opacity:0;transition:opacity .8s,transform .8s}
+.cutbox.show{opacity:1;transform:translateX(-50%)}
+.cutwho{font-family:var(--display);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-size:1.2rem;margin-bottom:8px;min-height:1.4em}
+.cutbox.fool .cutwho{color:#9ec8e0}
+.cuttxt{font-size:1.45rem;line-height:1.5;color:var(--parch)}
+.cuttxt p{margin:0 0 .5em}
+.cuttxt .dir{color:var(--ash);font-style:italic}
+.cutbox.nar .cuttxt{font-style:italic;color:#d9cfae;text-align:center}
+.cutnext{position:absolute;right:18px;bottom:10px;color:var(--gold);opacity:0;font-size:1rem}
+.cutnext.on{opacity:1;animation:cutBlink 1s ease-in-out infinite}
+@keyframes cutBlink{50%{opacity:.25}}
+.cutskip{position:absolute;right:18px;top:16px;z-index:3;opacity:.7}
+.cutfade{position:absolute;inset:0;background:#000;pointer-events:none;z-index:4}
+@media(prefers-reduced-motion:reduce){.cutinf.go{animation:none;opacity:1}.cutnext.on{animation:none}}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -727,19 +750,19 @@ const MINORS=U;
 const MJ={};
 const mj=(id,num,pt,en,title,suit,u,fx,pd,mech,md)=>{MJ[id]={id,num,pt,en,title,suit,u,fx,pd,mech,md,slug:SL(en)}};
 mj('fool','0','O Louco','The Fool','O Jogador','D',{hp:700,atk:42,rng:1,cd:9,sp:'leap',pw:.15},{},'Sempre seu. Se cair numa aposta, a jornada acaba.',null,'');
-mj('mago','I','O Mago','The Magician','O Artífice','W',{hp:800,atk:80,rng:3,cd:9,sp:'bolt',pw:3.4},{atk:.12},'+12% de dano.','trick','Truque: a cada 7s troca de lugar duas unidades inimigas.');
-mj('sacerdotisa','II','A Sacerdotisa','The High Priestess','O Véu de Lua','C',{hp:850,atk:70,rng:4,cd:10,sp:'stun',pw:2.6},{sp:.2,mana:.15},'+20% de poder das magias e +15% de energia inicial.','riddle','Enigma: a cada 7s paralisa uma unidade inimiga por 1,2s.');
-mj('imperatriz','III','A Imperatriz','The Empress','A Mãe Terra','C',{hp:1000,atk:55,rng:3,cd:10,sp:'healall',pw:2.4},{kh:.03,regen:.008},'Cada inimigo abatido cura 3% do time. Regenera 0,8% por segundo.','garden','Jardim: suas unidades regeneram 1,5% da vida por segundo.');
-mj('imperador','IV','O Imperador','The Emperor','O Trono de Ferro','P',{hp:1300,atk:75,rng:1,cd:10,sp:'taunt',pw:.5},{dr:.08,sh:.12},'-8% de dano recebido e escudo inicial de 12%.','order','Ordem: suas unidades começam com escudo de 25% da vida.');
-mj('papa','V','O Papa','The Hierophant','O Dogma','P',{hp:1100,atk:60,rng:3,cd:11,sp:'shield',pw:.22},{hp:.12,dr:.05},'+12% de vida e -5% de dano recebido.','heresy','Heresia: a cada 6s paralisa a unidade inimiga mais forte. Com metade da vida, chama dois acólitos.');
-mj('enamorados','VI','Os Enamorados','The Lovers','O Casal','C',{hp:900,atk:85,rng:2,cd:9,sp:'multi',pw:1.8},{crit:.15},'+15% de chance de crítico.','twin','Dois corpos: o casal luta em dupla, cada um com pouco mais da metade da vida.');
-mj('carro','VII','O Carro','The Chariot','O Conquistador','W',{hp:900,atk:80,rng:1,cd:8,sp:'dash',pw:2.5},{cd:.12},'+12% de velocidade de ataque.','charge','Investida: a cada 6s salta sobre a unidade inimiga mais recuada.');
-mj('forca','VIII','A Força','Strength','A Domadora','P',{hp:1300,atk:70,rng:1,cd:10,sp:'taunt',pw:.5},{hp:.15},'+15% de vida.','tame','Domar: a cada 8s ganha um grande escudo e fere quem estiver colado.');
-mj('eremita','IX','O Eremita','The Hermit','O Faroleiro','S',{hp:950,atk:65,rng:4,cd:10,sp:'snipe',pw:3.6},{th:.12},'Reflete 12% do dano recebido.','dark','Apaga a luz: em ciclos de 4,5s as unidades inimigas só alcançam à queima-roupa.');
-mj('roda','X','Roda da Fortuna','Wheel of Fortune','O Relojoeiro','W',{hp:950,atk:70,rng:2,cd:7,sp:'frenzy',pw:1},{cd:.1,crit:.08},'+10% de velocidade e +8% de crítico.','spin','A arena gira: a cada 6s todas as unidades trocam de lugar.');
-mj('justica','XI','Justiça','Justice','A Juíza Cega','P',{hp:1100,atk:75,rng:1,cd:10,sp:'drain',pw:2.6},{dr:.08,th:.06},'-8% de dano recebido e reflete 6%.','judge','Pesa suas apostas: quanto mais Arcanos Maiores o inimigo tem, mais dano ela causa.');
-mj('enforcado','XII','O Enforcado','The Hanged Man','O Sacrificado','S',{hp:1200,atk:60,rng:1,cd:10,sp:'quake',pw:1.5},{atk:.2},'+20% de dano.','sacrifice','Dor que nutre: perde 1,2% da vida por segundo, mas ganha dano a cada instante.');
-mj('morte','XIII','A Morte','Death','A Ceifadora','S',{hp:1000,atk:90,rng:1,cd:10,sp:'drain',pw:3},{kh:.05},'Cada inimigo abatido cura 5% do time.','touch','Toque gentil: a cada 7s apaga escudos e energia do time inimigo e cobra 10% da vida.');
+mj('mago','I','O Mago','The Magician','O Artífice','W',{hp:800,atk:80,rng:3,cd:9,sp:'bolt',pw:3.4},{atk:.15},'Suas unidades têm +15% dano de ataque.','trick','Truque: a cada 7s troca de lugar duas unidades inimigas.');
+mj('sacerdotisa','II','A Sacerdotisa','The High Priestess','O Véu de Lua','C',{hp:850,atk:70,rng:4,cd:10,sp:'stun',pw:2.6},{sp:.2,mana:.15},'Suas unidades recebem 15% de energia inicial e suas magias causam +20% de dano.','riddle','Enigma: a cada 7s paralisa uma unidade inimiga por 1,2s.');
+mj('imperatriz','III','A Imperatriz','The Empress','A Mãe Terra','C',{hp:1000,atk:55,rng:3,cd:10,sp:'healall',pw:2.4},{kh:.03,regen:.01},'Suas unidades regeneram 1% de vida por segundo. Cada inimigo abatido restaura 3% de vida de suas unidades.','garden','Jardim: suas unidades regeneram 1,5% da vida por segundo.');
+mj('imperador','IV','O Imperador','The Emperor','O Trono de Ferro','P',{hp:1300,atk:75,rng:1,cd:10,sp:'taunt',pw:.5},{dr:.10,sh:.15},'Suas unidades recebem -10% de dano. E recebem um escudo inicial de 15% da vida máx.','order','Ordem: suas unidades começam com escudo de 25% da vida.');
+mj('papa','V','O Papa','The Hierophant','O Dogma','P',{hp:1100,atk:60,rng:3,cd:11,sp:'shield',pw:.22},{hp:.10,dr:.05},'Suas unidades têm +10% de vida e recebem -5% de dano.','heresy','Heresia: a cada 6s paralisa a unidade inimiga mais forte. Com metade da vida, chama dois acólitos.');
+mj('enamorados','VI','Os Enamorados','The Lovers','O Casal','C',{hp:900,atk:85,rng:2,cd:9,sp:'multi',pw:1.8},{crit:.15},'Suas unidades têm +15% de chance de crítico.','twin','Dois corpos: o casal luta em dupla, cada um com pouco mais da metade da vida.');
+mj('carro','VII','O Carro','The Chariot','O Conquistador','W',{hp:900,atk:80,rng:1,cd:8,sp:'dash',pw:2.5},{cd:.15},'Suas unidades têm +15% de velocidade de ataque.','charge','Investida: a cada 6s salta sobre a unidade inimiga mais recuada.');
+mj('forca','VIII','A Força','Strength','A Domadora','P',{hp:1300,atk:70,rng:1,cd:10,sp:'taunt',pw:.5},{hp:.20},'Suas unidades têm +20% de vida.','tame','Domar: a cada 8s ganha um grande escudo e fere quem estiver colado.');
+mj('eremita','IX','O Eremita','The Hermit','O Faroleiro','S',{hp:950,atk:65,rng:4,cd:10,sp:'snipe',pw:3.6},{th:.15},'Suas unidades refletem 15% do dano recebido de ataques básicos.','dark','Apaga a luz: em ciclos de 4,5s as unidades inimigas só alcançam à queima-roupa.');
+mj('roda','X','Roda da Fortuna','Wheel of Fortune','O Relojoeiro','W',{hp:950,atk:70,rng:2,cd:7,sp:'frenzy',pw:1},{cd:.1,crit:.05},'Suas unidades têm +10% de velocidade de ataque e +5% de chance de crítico.','spin','A arena gira: a cada 6s todas as unidades trocam de lugar.');
+mj('justica','XI','Justiça','Justice','A Juíza Cega','P',{hp:1100,atk:75,rng:1,cd:10,sp:'drain',pw:2.6},{dr:.05,th:.05},'Suas unidades recebem -5% de dano recebido e reflete 5% do dano recebido.','judge','Pesa suas apostas: quanto mais Arcanos Maiores o inimigo tem, mais dano ela causa.');
+mj('enforcado','XII','O Enforcado','The Hanged Man','O Sacrificado','S',{hp:1200,atk:60,rng:1,cd:10,sp:'quake',pw:1.5},{atk:.2},'Suas unidades têm +20% de dano de ataque.','sacrifice','Dor que nutre: perde 1,2% da vida por segundo, mas ganha dano a cada instante.');
+mj('morte','XIII','A Morte','Death','A Ceifadora','S',{hp:1000,atk:90,rng:1,cd:10,sp:'drain',pw:3},{kh:.05},'Cada inimigo abatido cura 5% de seu grupo.','touch','Toque gentil: a cada 7s apaga escudos e energia do time inimigo e cobra 10% da vida.');
 mj('temperanca','XIV','A Temperança','Temperance','A Alquimista','C',{hp:900,atk:55,rng:3,cd:10,sp:'healall',pw:2},{regen:.01,sp:.1},'Regenera 1% por segundo e +10% de poder das magias.',null,'');
 mj('diabo','XV','O Diabo','The Devil','O Corruptor','W',{hp:950,atk:90,rng:3,cd:10,sp:'burn',pw:3.2},{atk:.25},'+25% de dano.','corrupt','Corrupção: a cada 8s enfraquece uma unidade inimiga (-20% de dano, para sempre).');
 mj('torre','XVI','A Torre','The Tower','A Catástrofe','W',{hp:900,atk:100,rng:3,cd:10,sp:'quake',pw:2.2},{atk:.15,crit:.1},'+15% de dano e +10% de crítico.','collapse','O chão cai: colunas desabam e ferem quem estiver sobre elas, de ambos os lados.');
@@ -951,7 +974,7 @@ function makePlan(S){
  const oid=S.opp,g=S.fl,m=MJ[oid];
  const n0=clamp(1+Math.floor(g*.22),1,3),n=clamp(Math.max(n0,maxU(S)-1),1,8);
  const pool=MINORS.filter(u=>u.c<=(g<3?2:3));
- const eb=1+0.07*(S.embate-1),sc=Math.min(1,.5+.05*g);
+ const eb=1+0.07*(S.embate-1),sc=1;
  const list=[];
  for(let i=0;i<n;i++){
   const s=Math.random()<.7?m.suit:pick(['W','C','S','P']);
@@ -985,8 +1008,8 @@ function buildPlayer(S){
   const hp=Math.max(50,b.hp*sm*(1+H));
   const mm=MANA[b.c];
   out.push(mkUnit({id:b.id,s:b.s,n:b.n,r:b.r,star:inst.star,team:0,x:i%COLS,y:PROW+Math.floor(i/COLS),hp,maxhp:hp,art:artOf(b.id),
-   atk:b.atk*sm*(1+A),rng:b.rng,cd:b.cd*(1-clamp(m.cd+(fx.cd||0),0,.6)),sp:b.sp,pw:b.pw,
-   manaMax:mm,mana:mm*m.mana+(fx.mana||0),crit:.05+m.crit+(fx.crit||0),dr:clamp(m.dr+(fx.dr||0),0,.6),
+   atk:b.atk*sm*(1+A),rng:b.rng,cd:b.cd*Math.max(.05,1-(m.cd+(fx.cd||0))),cd0:b.cd,sp:b.sp,pw:b.pw,
+   manaMax:mm,mana:mm*m.mana+(fx.mana||0),crit:.05+m.crit+(fx.crit||0),dr:m.dr+(fx.dr||0),
    sh:hp*(m.sh+(fx.sh||0)),regen:m.regen+(fx.regen||0),ls:m.ls+(fx.ls||0),th:m.th+(fx.th||0),spm:m.sp+(fx.sp||0),heal:fx.heal||0,dodge:m.dodge+(fx.dodge||0),
    burnPow:fx.burn?b.atk*sm*(1+A)*fx.burn:0,slowOn:fx.slow||0,mv:b.s==='S'?3:4}));
  });
@@ -1000,14 +1023,14 @@ function buildEnemies(plan){
   e.si=out.length;out.push(e);
  }
  const bd=MJU['M:'+plan.boss.bid],mj_=MJ[plan.boss.bid];
- const mk=(x,y,hp)=>Object.assign(mkUnit({id:bd.id,s:bd.s,n:bd.n,r:bd.r,star:1,team:1,x,y,hp,maxhp:hp,atk:plan.boss.atk,rng:bd.rng,cd:bd.cd,sp:bd.sp,pw:bd.pw,manaMax:100,mana:30,mv:5,boss:true,crit:.1,art:artOf(bd.id)}),{si:'boss'});
+ const mk=(x,y,hp)=>Object.assign(mkUnit({id:bd.id,s:bd.s,n:bd.n,r:bd.r,star:1,team:1,x,y,hp,maxhp:hp,atk:plan.boss.atk,rng:bd.rng,cd:bd.cd,cd0:bd.cd,sp:bd.sp,pw:bd.pw,manaMax:100,mana:30,mv:5,boss:true,crit:.1,art:artOf(bd.id)}),{si:'boss'});
  if(mj_.mech==='twin'){out.push(mk(4,0,plan.boss.hp*.55));out.push(mk(7,0,plan.boss.hp*.55))}
  else out.push(mk(plan.boss.x,plan.boss.y,plan.boss.hp));
  for(const e of out){const f=psyn.byIdx[e.si]||{};
-  e.atk*=1+(f.atk||0);e.hp*=1+(f.hp||0);e.maxhp=e.hp;e.cd*=1-clamp(f.cd||0,0,.6);e.crit+=f.crit||0;e.dr=clamp(e.dr+(f.dr||0),0,.6);e.regen+=f.regen||0;e.sh+=e.hp*(f.sh||0);e.ls+=f.ls||0;e.th+=f.th||0;e.dodge+=f.dodge||0;e.spm+=f.sp||0;e.heal+=f.heal||0;e.mana+=e.manaMax*0+(f.mana||0);if(f.burn)e.burnPow=e.atk*f.burn;if(f.slow)e.slowOn=f.slow}
- const am=sumFx(plan.abil||[]);for(const k in am)am[k]*=0.5;
+  e.atk*=1+(f.atk||0);e.hp*=1+(f.hp||0);e.maxhp=e.hp;e.cd*=Math.max(.05,1-(f.cd||0));e.crit+=f.crit||0;e.dr+=f.dr||0;e.regen+=f.regen||0;e.sh+=e.hp*(f.sh||0);e.ls+=f.ls||0;e.th+=f.th||0;e.dodge+=f.dodge||0;e.spm+=f.sp||0;e.heal+=f.heal||0;e.mana+=e.manaMax*0+(f.mana||0);if(f.burn)e.burnPow=e.atk*f.burn;if(f.slow)e.slowOn=f.slow}
+ const am=sumFx(plan.abil||[]);out.kh=am.kh;
  for(const e of out){
-  e.atk*=1+am.atk;e.hp*=1+am.hp;e.maxhp=e.hp;e.cd*=1-clamp(am.cd,0,.6);e.crit+=am.crit;e.dr=clamp(e.dr+am.dr,0,.6);e.regen+=am.regen;e.sh+=e.hp*am.sh;e.ls+=am.ls;e.th+=am.th;e.dodge+=am.dodge;e.spm+=am.sp;e.mana+=e.manaMax*am.mana;
+  e.atk*=1+am.atk;e.hp*=1+am.hp;e.maxhp=e.hp;e.cd*=Math.max(.05,1-am.cd);e.crit+=am.crit;e.dr+=am.dr;e.regen+=am.regen;e.sh+=e.hp*am.sh;e.ls+=am.ls;e.th+=am.th;e.dodge+=am.dodge;e.spm+=am.sp;e.mana+=e.manaMax*am.mana;
  }
  for(const e of out){
   if(mj_.mech==='garden')e.regen=Math.max(e.regen,.015);
@@ -1040,10 +1063,10 @@ class Sim{
  dmg(src,t,amount,o={}){
   if(t.dead)return;
   if(!o.sure&&t.dodge&&Math.random()<t.dodge){this.ev.push({k:'txt',u:t.uid,s:'esquiva'});return}
-  let d=amount*(1-t.dr);
+  let d=amount*Math.max(0,1-t.dr);
   if(t.sh>0){const a=Math.min(t.sh,d);t.sh-=a;d-=a}
   t.hp-=d;t.mana=Math.min(t.manaMax,t.mana+3);
-  this.ev.push({k:'dmg',u:t.uid,v:Math.round(amount*(1-t.dr)),c:!!o.crit});
+  this.ev.push({k:'dmg',u:t.uid,v:Math.round(amount*Math.max(0,1-t.dr)),c:!!o.crit});
   if(src&&src.ls&&d>0)this.heal(src,d*src.ls);
   if(src&&t.th&&!o.spell&&!o.noThorn)this.dmg(t,src,amount*t.th,{noThorn:1,sure:1});
   if(t.hp<=0)this.kill(t);
@@ -1051,13 +1074,14 @@ class Sim{
  kill(t){
   t.dead=true;this.ev.push({k:'die',u:t.uid});
   if(t.team===1&&this.ctx.kh){for(const a of this.alive(0))this.heal(a,a.maxhp*this.ctx.kh)}
+  if(t.team===0&&this.ctx.khE){for(const a of this.alive(1))this.heal(a,a.maxhp*this.ctx.khE)}
  }
  attack(u,t){
   let d=u.atk*elem(u.s,t.s);
-  const crit=Math.random()<u.crit;if(crit)d*=1.6;
+  const crit=Math.random()<u.crit;if(crit)d*=1.5;
   this.ev.push({k:'atk',a:u.uid,b:t.uid});
   this.dmg(u,t,d,{crit});
-  u.mana=Math.min(u.manaMax,u.mana+10);
+  u.mana=Math.min(u.manaMax,u.mana+10*(u.cd0?u.cd/u.cd0:1));
   if(u.burnPow){t.burnUntil=this.t+30;t.burnDmg=u.burnPow}
   if(u.slowOn)t.slow=this.t+20;
  }
@@ -1171,7 +1195,6 @@ class Sim{
     if(u.burnUntil>t)this.dmg(null,u,u.burnDmg,{spell:1,sure:1});
     if(u.regen&&!u.dead)this.heal(u,u.maxhp*u.regen);
     if(this.hz.some(h=>h.x===u.x&&h.until>t)&&!u.dead)this.dmg(null,u,u.maxhp*.05,{spell:1,sure:1});
-    if(t>600&&!u.dead)this.dmg(null,u,u.maxhp*Math.min(.12,.003*((t-600)/10)),{spell:1,sure:1});
    }
    this.hz=this.hz.filter(h=>h.until>t);
   }
@@ -1196,7 +1219,7 @@ class Sim{
 function buildSim(S){
  const m=getMods(S);
  const mech=MJ[S.plan.boss.bid].mech;
- return new Sim(buildPlayer(S),buildEnemies(S.plan),{mech,kh:m.kh,owned:S.majors.length-1});
+ const EN=buildEnemies(S.plan);return new Sim(buildPlayer(S),EN,{mech,kh:m.kh,khE:EN.kh||0,owned:S.majors.length-1});
 }
 function embateEnd(S,sim){
  const win=sim.result==='win';
@@ -1233,7 +1256,7 @@ const shardsFor=(S,won)=>Math.floor(S.g*2)+8*(S.majors.length-1)+(won?30:0);
 //#CORE_END
 
 const SKEY='torre_arcanos_save_v3',OLDKEY='torre_arcanos_meta_v2';
-const metaDef=()=>({shards:0,ups:{gold:0,shop:0,rr:0,start:0},runs:0,wins:0,best:0,endings:[],collection:[]});
+const metaDef=()=>({shards:0,ups:{gold:0,shop:0,rr:0,start:0},runs:0,wins:0,best:0,endings:[],collection:[],intro:0});
 let META=metaDef(),HAS_SAVE=false;
 function readSave(){try{const raw=localStorage.getItem(SKEY);if(raw)return JSON.parse(raw);const o=localStorage.getItem(OLDKEY);if(o)return{v:2,meta:JSON.parse(o),run:null}}catch(e){}return null}
 HAS_SAVE=!!readSave();
@@ -1307,6 +1330,77 @@ function showLobby(){
     <button class="btn ghost" data-a="title">Menu inicial</button>
    </div></div>
   ${hudHTML()}</div>`;
+}
+/* ===== Cutscene de abertura (primeira vez na Torre) ===== */
+const CUT=[
+['M','Ah. Acordou.\nNão se mexe muito, senão o sensor acha que você morreu e liga o alarme. De novo. É bem chato.'],
+['L','...onde... eu tô?\nQuem é você? Quem sou eu?'],
+['M','(anotando num blueprint) Perguntas excelentes. Em ordem: você tá no meu laboratório. Eu sou o dono do laboratório. E você... bom, é exatamente isso que a gente vai descobrir.\nComo você se chama?'],
+['L','Eu... eu não sei. Eu tentei lembrar e... não tem nada. Só... um precipício. E vontade de rir. Por que eu quero rir?'],
+['M','(sorriso cresce, agora interessado de verdade) Interessante. Amnésia total, mas o instinto continua. Você caiu do céu no meio da minha oficina ontem à noite. Literalmente. Atravessou o telhado. Quebrou três máquinas que eu demorei um mês pra calibrar.\nNenhum humano normal sobrevive a isso. Então ou você é muito sortudo, ou você é muito outra coisa.'],
+['L','Eu sou... outra coisa?'],
+['M','É o que eu vou testar.\nOlha, eu vou ser honesto com você porque mentir dá trabalho: você não é o primeiro que aparece aqui sem memória. Meu laboratório tá cheio de... "voluntários". Alguns eram deuses esquecidos, outros eram só malucos que bateram a cabeça. A maioria era só maluco.'],
+['L','E o que aconteceu com eles?'],
+['M','(dá de ombros) Alguns lembraram quem eram. A maioria... não. Mas todos foram úteis para a ciência.'],
+['N','Ele se aproxima, acende a ponta da varinha, e um símbolo de infinito flutua um segundo acima da cabeça do Louco e some.','inf'],
+['M','Você tem uma faísca. Bem pequena. Bem lá no fundo. Pode ser divindade. Pode ser só uma falha no meu sensor. Só tem um jeito de saber.'],
+['L','...qual?'],
+['M','Você vai ser meu próximo teste.\nEu vou te colocar pra fazer coisas que nenhum mortal aguentaria. Se você lembrar quem você é, ótimo. Você vira um deus de novo e eu fico famoso por ter te "consertado".\nSe você não lembrar...'],
+['L','Eu morro?'],
+['M','(o sorriso fica quase gentil, quase cruel) Você morre tentando descobrir. O que, convenhamos, é muito mais poético do que morrer sem tentar.'],
+['N','Silêncio. O Louco olha pras próprias mãos, depois pro Mago.'],
+['L','E se eu disser não?'],
+['M','Aí você pode sair pela porta ali. Tem uma cidade lá fora que não sabe seu nome, não tem sua comida, não tem sua casa. E tem um cara aqui dentro que talvez saiba como te devolver tudo.\nSua escolha, Louco. Eu já até te dei um nome.'],
+['L','...Louco?'],
+['M','É como eu chamo todos até eles provarem que são outra coisa. Nenhum reclamou depois. Os que sobreviveram, pelo menos.'],
+['N','O Louco senta na mesa, meio tonto, e pela primeira vez ri. Um riso leve, sem motivo.'],
+['L','Tá. Vamos testar, então. Mas se eu for um deus mesmo... você vai ter que me pedir desculpa por ter me chamado de Louco.'],
+['M','Fechado. E se você for só um maluco, você vai ter que me pedir desculpa por ter quebrado meu telhado.'],
+];
+let cutSt=null;
+function cutscene(done){
+ stopTimer();closeModal();music('prebattle');
+ $('#app').innerHTML=`<div class="cut"><div class="cutbg">${imgT('assets/portraits/the-mage','cutimg')}</div><div class="cutinf" id="cutinf">∞</div>
+  <div class="cutbox" id="cutbox"><div class="cutwho" id="cutwho"></div><div class="cuttxt" id="cuttxt"></div><span class="cutnext" id="cutnext">▼</span></div>
+  <button class="btn ghost cutskip" id="cutskip">Pular ›</button><div class="cutfade" id="cutfade"></div></div>`;
+ const st=cutSt={i:-1,typing:false,full:'',pos:0,tm:0,done,over:false,ready:false};
+ const who={M:'Mago',L:'Louco',N:''};
+ const box=$('#cutbox'),wh=$('#cutwho'),tx=$('#cuttxt');
+ const html=t=>t.split('\n').map(p=>{const m=p.match(/^\((.+?)\)\s*(.*)$/);return m?`<p><i class="dir">(${m[1]})</i> ${m[2]}</p>`:`<p>${p}</p>`}).join('');
+ const finishLine=()=>{clearTimeout(st.tm);st.typing=false;tx.innerHTML=html(st.full);$('#cutnext').classList.add('on')};
+ const typeStep=()=>{
+  st.pos+=1;
+  const part=st.full.slice(0,st.pos);
+  tx.innerHTML=html(part);
+  if(st.pos>=st.full.length){finishLine();return}
+  st.tm=setTimeout(typeStep,/[.!?…]$/.test(part)?170:24);
+ };
+ const end=()=>{
+  if(st.over)return;st.over=true;clearTimeout(st.tm);
+  document.removeEventListener('keydown',onKey,true);
+  const f=$('#cutfade');f.style.transition='opacity 1s';f.style.opacity=1;
+  setTimeout(()=>{cutSt=null;done()},1050);
+ };
+ const next=()=>{
+  if(st.over||!st.ready)return;
+  if(st.typing){finishLine();return}
+  st.i++;
+  if(st.i>=CUT.length){end();return}
+  const [w,t,fx]=CUT[st.i];
+  box.className='cutbox show '+(w==='N'?'nar':w==='L'?'fool':'mage');
+  wh.textContent=who[w];st.full=t;st.pos=0;st.typing=true;$('#cutnext').classList.remove('on');
+  if(fx==='inf'){const e=$('#cutinf');e.classList.remove('go');void e.offsetWidth;e.classList.add('go')}
+  typeStep();
+ };
+ const onKey=e=>{
+  if(e.key===' '||e.key==='Enter'){e.preventDefault();e.stopPropagation();next()}
+  else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();end()}
+ };
+ document.addEventListener('keydown',onKey,true);
+ $('.cut').addEventListener('click',e=>{if(e.target.id==='cutskip'){end();return}next()});
+ const f=$('#cutfade');f.style.opacity=1;
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transition='opacity 2.2s ease-out';f.style.opacity=0}));
+ setTimeout(()=>{box.classList.add('show');st.ready=true;next()},2300);
 }
 function showAlbum(){
  const ids=Object.keys(MJ).filter(k=>k!=='fool');
@@ -1691,7 +1785,7 @@ document.addEventListener('click',e=>{
   case'loadgame':if(loadGame())showLobby();break;
   case'title':showTitle();break;
   case'lobby':showLobby();break;
-  case'tower':S?showTower():startRun();break;
+  case'tower':if(S)showTower();else if(!META.intro)cutscene(()=>{META.intro=1;saveGame();startRun()});else startRun();break;
   case'enter':S.fl=selFloor;S.opp=FLOORS[selFloor].opp;showEncounter();break;
   case'floor':showTower(+arg);break;
   case'equip':{const r=toggleEquip(S,arg);if(r)toast(r);saveGame();showTower(selFloor);break}
