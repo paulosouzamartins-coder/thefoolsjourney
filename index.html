@@ -797,7 +797,7 @@ const signTh=k=>(SIGNN[k]||0)>=4?[3,4]:[3];
 const MINORS=U;
 // Patronos: cada signo tem um Arcano Maior como patrono
 const PATSIGN={imperador:'cancer',forca:'scorpio',temperanca:'pisces',carro:'libra',morte:'aquarius',lua:'gemini',justica:'capricorn',estrela:'taurus',enamorados:'virgo',diabo:'aries',papa:'leo',eremita:'sagittarius'};
-const PATG=.6,PATB=1.6;
+const PATG=1,PATB=2;
 
 const MJ={};
 const mj=(id,num,pt,en,title,suit,u,fx,pd,mech,md)=>{MJ[id]={id,num,pt,en,title,suit,u,fx,pd,mech,md,slug:SL(en)}};
@@ -823,7 +823,7 @@ mj('lua','XVIII','A Lua','The Moon','A Ilusória','C',{hp:850,atk:70,rng:4,cd:10
 mj('sol','XIX','O Sol','The Sun','O Radiante','W',{hp:1000,atk:85,rng:3,cd:8,sp:'burn',pw:3.2},{atk:.1,hp:.1},'+10% de dano e de vida.',null,'');
 mj('julgamento','XX','Julgamento','Judgement','O Anjo Final','C',{hp:1100,atk:80,rng:4,cd:10,sp:'snipe',pw:3.8},{dr:.1,atk:.08},'-10% de dano recebido e +8% de dano.','trumpet','Veredito: a cada 8s fere todo o time inimigo, mais forte quanto mais Arcanos Maiores o inimigo tem.');
 mj('mundo','XXI','O Mundo','The World','A Mãe Original','C',{hp:1800,atk:90,rng:4,cd:10,sp:'tide',pw:2.6},{},'','wail','A deusa que se despedaçou. Lamento a cada 6s, regenera e invoca estilhaços. Cada Arcano Maior seu a enfraquece.');
-for(const k in PATSIGN)MJ[k].sign=PATSIGN[k];
+for(const k in PATSIGN){MJ[k].sign=PATSIGN[k];MJ[k].pd+=' '+SIGNS[PATSIGN[k]].g+' '+SIGNS[PATSIGN[k]].n+': efeito dobrado.'}
 const MJU={};
 for(const id in MJ){const m=MJ[id];MJU['M:'+id]={id:'M:'+id,s:m.suit,n:m.pt,r:m.num,c:0,major:true,mid:id,sign:m.sign||null,signs:m.sign?[m.sign]:[],...m.u}}
 const defOf=id=>id.startsWith('M:')?MJU[id]:UB[id];
@@ -852,8 +852,102 @@ const MUPS=[
  {k:'start',n:'Lembrança de um Deus',d:'Começa a jornada já com 1 Arcano Maior por nível, sorteado.',max:2,cost:l=>30*(l+1)}
 ];
 
+const DLG={
+ mago:[
+  'Voltou ao laboratório? Eu disse que você voltaria. Só não esperava que fosse para me enfrentar.',
+  'Você disse que eu era um teste. Hoje eu quero a minha nota.',
+  'Cuidado com o tabuleiro, Louco. Eu mudo as peças de lugar antes de você perceber. Se vencer, leva um fragmento do Mundo que guardei. Se perder, perde o que apostar.',
+  'Então eu aposto. Quero ver o que o seu truque faz com uma falha no sensor.'],
+ imperatriz:[
+  'Pare onde está, criança. Esta terra me obedece. Cada raiz aqui sabe o seu nome, mesmo que você não saiba.',
+  'Você me conhece? Eu sinto que já passei por um jardim assim.',
+  'Passou. Antes de o Mundo se partir, nós caminhávamos por ele. Meu pedaço virou jardim e eu cuido dele desde então. Quem o quiser vai ter de me ferir mais rápido do que eu cresço de volta.',
+  'Então eu venho rápido. Desculpe pelas flores.'],
+ imperador:[
+  'Mais um mendigo de memória subindo a minha Torre. Aqui nada se move sem a minha ordem.',
+  'Eu só quero o que você guarda. Um pedaço do Mundo.',
+  'O Mundo era um trono, e eu sou o que sobrou dele de pé. Meus soldados não recuam e minha armadura não rói. Se quer o meu fragmento, aposte um dos seus deuses.',
+  'Então eu aposto. Trono de ferro também derrete.'],
+ enamorados:[
+  'Ele chegou, meu bem. O Louco que o Mago gosta de contar histórias. Ele é menor do que eu imaginava.',
+  'Vocês são dois? Eu só vejo uma sombra se mexendo.',
+  'Somos um só dividido em dois, desde que o Mundo se quebrou. Cada metade luta por quem a outra é. Se você nos separar, vai ouvir o que nenhum de nós conseguiu dizer.',
+  'Eu não separo ninguém. Só vou passar por vocês.'],
+ papa:[
+  'Ajoelhe-se, filho. O Dogma não é um fragmento, é uma lei. E a lei diz que ninguém passa sem ser julgado.',
+  'Eu não lembro de lei nenhuma. Só de uma queda.',
+  'Esse é o seu pecado. Quem esquece o que foi precisa de quem lhe diga o que é. Eu chamo os meus acólitos quando o meu fôlego falha. Prove que a sua fé é maior.',
+  'Não tenho fé. Mas tenho uma aposta.'],
+ sacerdotisa:[
+  'Antes de lutar, responda. O que o Louco procura na Torre?',
+  'Quem eu era. E um pedaço do Mundo, se for a mesma coisa.',
+  'Quase certo. O véu que eu guardo esconde as duas respostas. Se errar o meu enigma, ficará paralisado enquanto eu penso. Se acertar, a Lua deixa passar.',
+  'Eu nunca soube responder nada. Mas posso tentar a sorte.'],
+ eremita:[
+  'Fique onde há luz, estranho. Fora dela, ninguém enxerga ninguém.',
+  'Você é o Faroleiro. O Mago falou de você. Disse que você apagou a lanterna.',
+  'Apaguei para ver melhor. No escuro só o que está perto importa. Se quer o meu fragmento, terá de lutar de perto, onde eu não consigo mais enxergar o que você é.',
+  'Eu nem sei o que sou. Vem comigo para o escuro.'],
+ roda:[
+  'Tique, taque. Você está atrasado, Louco. Ou adiantado. Já perdi a conta.',
+  'Atrasado para quê?',
+  'Para o dia em que o Mundo parou de girar. Eu guardo o que sobrou, a engrenagem que muda tudo de lugar. A sorte aqui gira a cada seis segundos. Aposte quando quiser, ela vira quando quiser.',
+  'Gosto de apostas. Pode girar.'],
+ justica:[
+  'Em nome do Mundo despedaçado, eu peso. Você carrega tantos deuses na sua aposta quanto a sua dívida permite?',
+  'Eu não devo nada a ninguém. Eu não lembro de ninguém.',
+  'Esse é exatamente o ponto. Quem esquece, não paga. Quem não paga, precisa ser cobrado. A minha espada fica mais pesada a cada Arcano que você traz ao meu tribunal.',
+  'Então eu trago só o necessário. E arrisco o resto.'],
+ enforcado:[
+  'Não tenha pressa. De cabeça para baixo, o mundo parece mais honesto.',
+  'Você está preso aí há quanto tempo?',
+  'Desde que escolhi ficar. Cada dia eu sangro um pouco e, em troca, enxergo um pouco mais. Se quer o meu pedaço, vai ter de ferir quem aceitou se ferir sozinho.',
+  'Isso parece triste. Mas eu preciso do fragmento.'],
+ morte:[
+  'Eu já esperava você, Louco. Eu espero todos, no fim. Só que você chegou cedo demais.',
+  'Eu morri alguma vez? Não lembro do outro lado.',
+  'Todos que passaram pelo laboratório do Mago passaram por mim primeiro. Eu não sou cruel. Eu apago. Escudos, energia, o que sobra de vontade. E depois cobro uma parte da vida de quem luta.',
+  'Então eu luto depressa. Para você não ter tempo de cobrar.'],
+ diabo:[
+  'Que cheiro bom de dúvida. Você quer o que eu guardo, Louco? Eu posso te dar muito mais.',
+  'Não troco o que não conheço. Só quero meu fragmento.',
+  'Ah, mas é isso que eu corrompo. O que você quer vira o que eu quero. Cada oito segundos, um dos seus fica mais fraco, para sempre. É um bom negócio. Você só não percebe a letra pequena.',
+  'Eu aposto contra a letra pequena. Vamos ver quem sai devendo.'],
+ torre:[
+  'Você sobe, eu desabo. É assim que funciona aqui desde o dia em que o céu rachou.',
+  'Foi você que me derrubou no telhado do Mago?',
+  'Não. Foi o que veio antes. Eu sou o que sobra de uma coisa que caiu. Cada coluna que cai leva consigo quem está em cima, seu ou meu. Eu não escolho lado, só o chão.',
+  'Então eu escolho onde pisar. E aposto que você erra o chão antes de mim.'],
+ lua:[
+  'Boa noite, Louco. Ou bom dia. Aqui a luz não decide.',
+  'Você é a Ilusória. Eu vejo três de mim ao seu lado.',
+  'Elas são as suas sombras mais fortes. Eu só ensinei a elas a lutar. Quanto mais forte for um dos seus, mais forte a sua cópia será contra você. Cuidado com o reflexo.',
+  'Eu nem sei se tenho reflexo. Pode vir.'],
+ julgamento:[
+  'Ouça. A trombeta chama os que dormiam. Todos os deuses que você derrotou estão me ouvindo agora.',
+  'Eu não derrotei ninguém. Eles me deixaram passar.',
+  'Eles guardaram o que restava do Mundo para você. É isso que o Anjo Final vem cobrar. Cada Arcano que você carrega pesa no veredito. Prove que merece o que carrega.',
+  'Eu vim provar. Toque a sua trombeta.'],
+ carro:[
+  'Alto lá! Você chegou longe para um Louco sem memória. Eu sou o Conquistador, o que nunca perdeu uma corrida.',
+  'Eu só estou subindo uma Torre. Não corro.',
+  'Todo mundo corre aqui. Quem fica para trás vira estátua. Eu salto sobre o mais recuado do seu grupo e termino antes de você terminar a frase.',
+  'Então fale devagar. Eu aposto que chego antes.'],
+ forca:[
+  'Eu domo o que ruge, Louco. E você tem um riso que ruge baixinho. Eu ouvi desde o primeiro andar.',
+  'Você não parece ter medo.',
+  'Eu não tenho. Tenho paciência. O leão sob a minha mão já foi mais forte que o Mundo, e hoje obedece. Se me tocar, ganha o meu escudo, e quem estiver colado paga.',
+  'Então eu não me aproximo demais. Ou me aproximo e aposto.'],
+ mundo:[
+  'Você chegou ao topo, pequeno. Eu me despedacei para que você existisse. Cada Arcano que você carrega é um pedaço de mim.',
+  'Eu sou o Louco. Eu caí do céu na oficina do Mago. Você era a deusa que tudo isso começou?',
+  'Eu era o Mundo inteiro. Meu lamento ainda ecoa nos estilhaços que você enfrentou. Quanto mais deuses você tem comigo, mais fraca eu fico. Mas ainda sou eu quem decide o que acontece depois.',
+  'Eu não vim lutar com você. Vim lembrar quem eu sou. Mas se tiver de ser assim, eu aposto tudo.']
+};
 function dialogue(oid){
- const m=MJ[oid];
+ const m=MJ[oid],L=DLG[oid];
+ const who=['opp','fool','opp','fool'];
+ if(L)return L.map((t,i)=>({w:who[i],t}));
  return [
   {w:'opp',t:`Então você é o Louco que sobe a Torre. Eu sou ${m.pt}, ${m.title}.`},
   {w:'fool',t:'Não me lembro de quem eu sou. Só sei que preciso passar por você.'},
@@ -1043,7 +1137,9 @@ function makePlan(S){
  for(let i=0;i<n;i++){
   const s=Math.random()<.7?m.suit:pick(['W','C','S','P']);
   const su=s!=='D'&&SUITS[s]?s:pick(['W','C','S','P']);
-  const u=pick(pool.filter(x=>x.s===su));
+  const ps=(S.abil||[]).map(k=>PATSIGN[k]).filter(Boolean);
+  const pp=ps.length&&Math.random()<.5?pool.filter(x=>x.signs.some(k=>ps.includes(k))):[];
+  const u=pick(pp.length?pp:pool.filter(x=>x.s===su));
   let star=1;
   if(g>=4&&Math.random()<(g-3)*.04)star=2;
   if(g>=11&&Math.random()<(g-10)*.03)star=3;
@@ -1805,7 +1901,7 @@ function renderBench(){
 const sgG=d=>(d.signs||[]).map(k=>SIGNS[k].g).join('');
 const signTxt=d=>d.signs&&d.signs.length?d.signs.map(k=>SIGNS[k].g+' '+SIGNS[k].n).join(' · '):'sem signo';
 const patOf=d=>(d.signs||[]).map(k=>Object.keys(PATSIGN).find(m=>PATSIGN[m]===k)).filter(Boolean).map(m=>MJ[m].pt);
-const rankName=u=>RANKN[u.r]?RANKN[u.r]+' de '+SUITS[u.s].n:u.r+' de '+SUITS[u.s].n;
+const rankName=u=>u.r==='A'?u.n:RANKN[u.r]?RANKN[u.r]+' de '+SUITS[u.s].n:u.r+' de '+SUITS[u.s].n;
 function infoHTML(d){
  const rn=rankName(d);
  return`<b>${d.n}</b> · ${rn===d.n?'':rn+' · '}${signTxt(d)} · ${SUITS[d.s].el} · Vida ${d.hp} · Dano ${d.atk} · Alcance ${d.rng}<br><span class="s-${d.s}">${SP[d.sp][0]}:</span> ${SP[d.sp][1]}`;
@@ -1840,10 +1936,10 @@ const ct=syn.court;
   h+=synLine('var(--gold)','<span class="gl">'+(RANKPL[r]?'♛︎':r)+'</span>',valLabel(r),e.count,VALNEED,e.tier,[{n:VALNEED,t:fxDesc(VALFX)}])}
  return h;
 }
-const pnames=ids=>ids.map(k=>`<span class="pname" data-pid="${k}" tabindex="0">${MJ[k].pt}</span>`).join('');
+const pnames=ids=>ids.length?ids.map(k=>`<div class="pnl"><span class="pname" data-pid="${k}" tabindex="0">${MJ[k].pt}</span><small>${MJ[k].pd}</small></div>`).join(''):'';
 function renderSyn(){
  const me=$('#synme'),foe=$('#synfoe');if(!me||!foe)return;
- me.innerHTML=(S.equip.length?`<div class="pn-row">${S.equip.map(k=>`<div class="pnl"><span class="pname" data-pid="${k}" tabindex="0">${MJ[k].pt}</span><small>${MJ[k].pd}</small></div>`).join('')}</div>`:'')+synHTML(computeSyn(S));
+ me.innerHTML=(S.equip.length?`<div class="pn-row">${pnames(S.equip)}</div>`:'')+synHTML(computeSyn(S));
  if(S.pvp){foe.innerHTML=`<div class="pn-row">${pnames(S.oppEquip||[])}</div>`+(S.oppBoard?synHTML(computeSyn({board:S.oppBoard})):'');return}
  foe.innerHTML=`<div class="pn-row">${pnames(S.abil)}</div>${S.plan.mech?`<div class="mechl">${esc(S.plan.mech)}</div>`:''}`+synHTML(planSyn(S.plan));
 }
@@ -1858,7 +1954,17 @@ function defPrev(){
  const x=sel&&getSlot(S,sel);
  return x?prevHTML(x.id,x.star):'<div class="pvempty">✦</div>';
 }
-function renderPrev(){const b=$('#prevbox');if(b)b.innerHTML=defPrev()}
+function fitPrev(){
+ const b=$('#prevbox'),t=b&&b.querySelector('.pvt'),a=b&&b.querySelector('.art');if(!t)return;
+ t.style.fontSize='';if(a)a.style.width='';
+ const ov=()=>b.scrollHeight>b.clientHeight+1;
+ if(a){let w=a.getBoundingClientRect().width;while(ov()&&w>110){w*=.95;a.style.width=w+'px'}}
+ let f=parseFloat(getComputedStyle(t).fontSize)||17;
+ while(ov()&&f>9){f-=.5;t.style.fontSize=f+'px'}
+ if(a){let w=a.getBoundingClientRect().width;while(ov()&&w>50){w*=.94;a.style.width=w+'px'}}
+}
+function renderPrev(){const b=$('#prevbox');if(b){b.innerHTML=defPrev();fitPrev()}}
+addEventListener('resize',()=>fitPrev());
 function renderMenu(){
  const m=$('#menu');
  if(sim){
@@ -2095,7 +2201,7 @@ document.addEventListener('dragend',()=>{drag=null;document.querySelectorAll('.d
 document.addEventListener('dragover',e=>{if(drag&&dropZone(e))e.preventDefault()});
 document.addEventListener('drop',e=>{if(!drag)return;const z=dropZone(e);if(!z)return;e.preventDefault();const d=drag;drag=null;doDrop(d,z)});
 const hov='.tile[data-id],.u[data-id]';
-const showInfo=e=>{const c=e.target.closest&&e.target.closest(hov);const el=$('#prevbox');if(c&&el&&c.dataset.id)el.innerHTML=prevHTML(c.dataset.id,+c.dataset.star||1)};
+const showInfo=e=>{const c=e.target.closest&&e.target.closest(hov);const el=$('#prevbox');if(c&&el&&c.dataset.id){el.innerHTML=prevHTML(c.dataset.id,+c.dataset.star||1);fitPrev()}};
 const hideInfo=e=>{const c=e.target.closest&&e.target.closest(hov);if(c&&!(e.relatedTarget&&c.contains(e.relatedTarget)))renderPrev()};
 const showPas=e=>{const c=e.target.closest&&e.target.closest('.pname[data-pid]');const w=$('#pasv');if(!w)return;
  if(c){const k=c.dataset.pid;w.innerHTML=majorArt(k)+`<div class="pvt"><div class="pn">${MJ[k].pt}</div><div class="psp">${MJ[k].pd||'Sem bônus.'}</div></div>`;w.hidden=false}};
