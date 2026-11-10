@@ -289,7 +289,7 @@ h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;letter-spacing:.05e
 .tile .nmb{position:absolute;left:0;right:0;bottom:0;z-index:3;background:rgba(18,17,13,.9);color:var(--bone);font-family:var(--display);font-size:max(8px,8.4cqw);line-height:1.1;padding:2px 4px;letter-spacing:.02em;overflow:hidden;max-height:2.4em;text-align:center}
 .tile .nmb em{font-style:normal;color:var(--gold)}
 .tile .pr{position:absolute;right:3%;top:5%;z-index:4;background:var(--ink);border:2px solid var(--gold);color:var(--gold);font-family:var(--num);font-weight:700;font-size:max(10px,12cqw);line-height:1;padding:.25em .5em;border-radius:50%}
-.tile .sg{position:absolute;left:3%;top:5%;z-index:4;background:var(--ink);border:1px solid var(--gold-d);color:var(--bone);font-size:max(11px,13cqw);line-height:1;padding:.15em .3em;border-radius:50%}
+.tile .sg{border-radius:999px!important;position:absolute;left:3%;top:5%;z-index:4;background:var(--ink);border:1px solid var(--gold-d);color:var(--bone);font-size:max(11px,13cqw);line-height:1;padding:.15em .3em;border-radius:50%}
 .tile[data-id]:hover:not(:disabled){transform:translateY(-4px);z-index:5}
 .tile:disabled{filter:grayscale(.7) brightness(.75);cursor:not-allowed}
 .tile.sel{outline:2px solid var(--gold);outline-offset:1px}
@@ -368,6 +368,7 @@ button.rung:hover{border-color:var(--gold-d)}
 .ut{border:6px solid currentColor;border-radius:4px;box-shadow:none}
 .ut img{position:absolute;inset:auto;left:-16%;top:-11.5%;width:132%;height:132%;max-width:none;object-fit:cover;object-position:50% 36%;transform:none}
 .ut .fb{font-size:34cqw}.ut .fb.l{font-size:24cqw}
+.ut .sgl.m{font-size:13cqw;letter-spacing:-.05em}
 .ut .sgl{font-size:20cqw;color:#f3e7c6;text-shadow:0 1px 2px #000,0 0 4px #000;left:4%;top:2%}
 .ut .st{font-size:15cqw;bottom:1%}
 .u .hp{left:6%;right:6%;bottom:2%;height:7%}
@@ -698,7 +699,7 @@ const SUITS={W:{n:'Paus',el:'Fogo'},C:{n:'Copas',el:'Água'},S:{n:'Espadas',el:'
 const ADV={C:'W',W:'S',S:'P',P:'C'};
 const elem=(a,d)=>ADV[a]===d?1.25:(ADV[d]===a?0.85:1);
 const STAR=[1,1.8,3.4];
-const MANA={0:100,1:60,2:80,3:100};
+const MANA={0:100,1:60,2:80,3:100,4:120};
 
 const SP={
  burn:['Chama Viva','Explode em área e incendeia.'],
@@ -719,45 +720,84 @@ const SP={
 };
 
 const SUITKEYS=['W','C','S','P'];
-const RANKS=['2','3','4','5','6','7','8','9','10','Pr','Pc','Rn','Cv'];
-const TORDER=['2','3','4','Pr','5','6','7','8','9','10','Pc','Rn','Cv'];
-const TIERFN=(s,r)=>{const p=TORDER.indexOf(r),n1=s==='W'?5:4,n2=s==='C'?5:4;return p<n1?1:p<n1+n2?2:3};
 const RANKN={Pr:'Princesa',Pc:'Príncipe',Rn:'Rainha',Cv:'Cavaleiro'};
 const RANKPL={Pr:'Princesas',Pc:'Príncipes',Rn:'Rainhas',Cv:'Cavaleiros'};
-// Nomes de Crowley (Thoth) para as cartas numeradas
-const PIPN={
- W:['Domínio','Virtude','Completude','Disputa','Vitória','Valor','Rapidez','Fortaleza','Opressão'],
- C:['Amor','Abundância','Luxo','Decepção','Prazer','Deboche','Indolência','Felicidade','Saciedade'],
- S:['Paz','Tristeza','Trégua','Derrota','Ciência','Futilidade','Interferência','Crueldade','Ruína'],
- P:['Mudança','Obras','Poder','Preocupação','Sucesso','Fracasso','Prudência','Ganho','Riqueza']};
-// Signos do Zodíaco (Thoth): cada carta numerada pertence a um decanato; cada Rainha, Príncipe e Cavaleiro governa um signo. As Princesas não têm signo.
+// Signos do Zodíaco: cada carta numerada pertence a um decanato; Rainhas, Príncipes e Cavaleiros governam dois signos; o Ás vale para os três signos do naipe; as Princesas não têm signo.
 const SIGNS={
  aries:{n:'Áries',g:'♈︎'},taurus:{n:'Touro',g:'♉︎'},gemini:{n:'Gêmeos',g:'♊︎'},cancer:{n:'Câncer',g:'♋︎'},
  leo:{n:'Leão',g:'♌︎'},virgo:{n:'Virgem',g:'♍︎'},libra:{n:'Libra',g:'♎︎'},scorpio:{n:'Escorpião',g:'♏︎'},
  sagittarius:{n:'Sagitário',g:'♐︎'},capricorn:{n:'Capricórnio',g:'♑︎'},aquarius:{n:'Aquário',g:'♒︎'},pisces:{n:'Peixes',g:'♓︎'},corte:{n:'Alta Corte',g:'♛︎'}};
-const PIPSIGN={W:['aries','leo','sagittarius'],C:['cancer','scorpio','pisces'],S:['libra','aquarius','gemini'],P:['capricorn','taurus','virgo']};
-const COURTSIGN={Rn:{W:'aries',C:'cancer',S:'libra',P:'capricorn'},Pc:{W:'leo',C:'scorpio',S:'aquarius',P:'taurus'},Cv:{W:'sagittarius',C:'pisces',S:'gemini',P:'virgo'}};
-const SPELLS={
- W:['taunt','multi','frenzy','frenzy','burn','burn','bolt','frenzy','bolt','burn','burn','bolt','burn'],
- C:['shield','heal','shield','stun','heal','stun','tide','healall','healall','heal','tide','tide','stun'],
- S:['dash','multi','drain','drain','snipe','dash','multi','snipe','snipe','snipe','dash','drain','dash'],
- P:['taunt','quake','quake','shield','shield','taunt','taunt','quake','quake','taunt','shield','taunt','quake']};
 const SPRNG={burn:1,bolt:2,frenzy:1,taunt:1,shield:2,heal:3,healall:3,stun:2,tide:3,snipe:4,dash:1,multi:3,drain:1,quake:1};
 const SPPW={burn:1.6,bolt:2.8,frenzy:1,taunt:.32,shield:.15,heal:2.8,healall:2.4,stun:1.4,tide:2,snipe:3.2,dash:2.4,multi:1.25,drain:2.4,quake:1.4};
-const ARCH={W:{hp:420,atk:34,cd:9},C:{hp:400,atk:26,cd:10},S:{hp:380,atk:38,cd:9.5},P:{hp:540,atk:26,cd:10}};
-const U=[];
-for(const s of SUITKEYS)RANKS.forEach((r,i)=>{
- const t=TIERFN(s,r),sp=SPELLS[s][i],A=ARCH[s];
- const v=1+.04*(((i*3+SUITKEYS.indexOf(s)*2)%5)-2);
- const n=i<9?PIPN[s][i]:RANKN[r]+' de '+SUITS[s].n;
- const sign=i<9?PIPSIGN[s][Math.floor(i/3)]:(COURTSIGN[r]?COURTSIGN[r][s]:null);
- U.push({id:s.toLowerCase()+r.toLowerCase(),s,n,r,c:t,sign,hp:Math.round(A.hp*[1,1.3,1.85][t-1]*v/10)*10,atk:Math.round(A.atk*[1,1.3,1.75][t-1]*(2-v)),rng:SPRNG[sp],cd:A.cd,sp,pw:+(SPPW[sp]*[1,1.15,1.3][t-1]).toFixed(2)});
-});
+const ARCH={W:{cd:9},C:{cd:10},S:{cd:9.5},P:{cd:10}};
+const TIERPW=[1,1.15,1.3,1.45];
+// Base de dados: [naipe, valor, nome, tier, vida, dano, signos, magia]
+const DBM=[
+ ["C","A","Ás de Copas",4,1030,64,["cancer","scorpio","pisces"],"healall"],
+ ["C","2","Amor",1,400,26,["cancer"],"shield"],
+ ["C","3","Abundância",1,410,27,["cancer"],"heal"],
+ ["C","4","Luxo",1,420,28,["cancer"],"shield"],
+ ["C","5","Decepção",2,520,34,["scorpio"],"stun"],
+ ["C","6","Prazer",2,530,35,["scorpio"],"heal"],
+ ["C","7","Deboche",2,540,36,["scorpio"],"stun"],
+ ["C","8","Indolência",3,740,45,["pisces"],"tide"],
+ ["C","9","Felicidade",3,760,47,["pisces"],"healall"],
+ ["C","10","Saciedade",3,780,48,["pisces"],"healall"],
+ ["C","Pr","Princesa de Copas",3,750,46,[],"heal"],
+ ["C","Pc","Príncipe de Copas",3,770,47,["libra","scorpio"],"tide"],
+ ["C","Rn","Rainha de Copas",3,760,46,["gemini","cancer"],"tide"],
+ ["C","Cv","Cavaleiro de Copas",3,790,49,["aquarius","pisces"],"stun"],
+ ["S","A","Ás de Espadas",4,980,92,["gemini","libra","aquarius"],"multi"],
+ ["S","2","Paz",1,380,38,["libra"],"dash"],
+ ["S","3","Tristeza",1,390,40,["libra"],"multi"],
+ ["S","4","Trégua",1,400,41,["libra"],"drain"],
+ ["S","5","Derrota",2,490,50,["aquarius"],"drain"],
+ ["S","6","Ciência",2,500,52,["aquarius"],"snipe"],
+ ["S","7","Futilidade",2,510,53,["aquarius"],"dash"],
+ ["S","8","Interferência",3,700,66,["gemini"],"multi"],
+ ["S","9","Crueldade",3,720,68,["gemini"],"snipe"],
+ ["S","10","Ruína",3,740,70,["gemini"],"snipe"],
+ ["S","Pr","Princesa de Espadas",3,710,67,[],"snipe"],
+ ["S","Pc","Príncipe de Espadas",3,730,69,["capricorn","aquarius"],"dash"],
+ ["S","Rn","Rainha de Espadas",3,720,68,["virgo","libra"],"drain"],
+ ["S","Cv","Cavaleiro de Espadas",3,750,71,["taurus","gemini"],"dash"],
+ ["P","A","Ás de Ouros",4,1380,66,["taurus","virgo","capricorn"],"quake"],
+ ["P","2","Mudança",1,540,26,["capricorn"],"taunt"],
+ ["P","3","Obras",1,550,27,["capricorn"],"quake"],
+ ["P","4","Poder",1,560,28,["capricorn"],"quake"],
+ ["P","5","Preocupação",2,700,34,["taurus"],"shield"],
+ ["P","6","Sucesso",2,720,35,["taurus"],"shield"],
+ ["P","7","Fracasso",2,730,36,["taurus"],"taunt"],
+ ["P","8","Prudência",3,1000,46,["virgo"],"taunt"],
+ ["P","9","Ganho",3,1020,48,["virgo"],"quake"],
+ ["P","10","Riqueza",3,1050,50,["virgo"],"quake"],
+ ["P","Pr","Princesa de Discos",3,1010,47,[],"taunt"],
+ ["P","Pc","Príncipe de Discos",3,1030,49,["aries","taurus"],"shield"],
+ ["P","Rn","Rainha de Discos",3,1020,48,["sagittarius","capricorn"],"taunt"],
+ ["P","Cv","Cavaleiro de Discos",3,1060,51,["leo","virgo"],"quake"],
+ ["W","A","Ás de Paus",4,1070,81,["aries","leo","sagittarius"],"bolt"],
+ ["W","2","Domínio",1,420,34,["aries"],"bolt"],
+ ["W","3","Virtude",1,430,35,["aries"],"burn"],
+ ["W","4","Completude",1,440,36,["aries"],"burn"],
+ ["W","5","Disputa",2,540,44,["leo"],"frenzy"],
+ ["W","6","Vitória",2,560,45,["leo"],"burn"],
+ ["W","7","Valor",2,570,46,["leo"],"bolt"],
+ ["W","8","Rapidez",3,770,58,["sagittarius"],"frenzy"],
+ ["W","9","Fortaleza",3,790,60,["sagittarius"],"bolt"],
+ ["W","10","Opressão",3,820,62,["sagittarius"],"burn"],
+ ["W","Pr","Princesa de Paus",3,780,59,[],"burn"],
+ ["W","Pc","Príncipe de Paus",3,800,61,["cancer","leo"],"frenzy"],
+ ["W","Rn","Rainha de Paus",3,790,60,["pisces","aries"],"burn"],
+ ["W","Cv","Cavaleiro de Paus",3,810,62,["scorpio","sagittarius"],"frenzy"]];
+const U=DBM.map(([s,r,n,t,hp,atk,signs,sp])=>({id:s.toLowerCase()+r.toLowerCase(),s,n:r==='A'?n:RANKN[r]?RANKN[r]+' de '+SUITS[s].n:n,r,c:t,sign:signs[0]||null,signs,hp,atk,rng:SPRNG[sp],cd:ARCH[s].cd,sp,pw:+(SPPW[sp]*TIERPW[t-1]).toFixed(2)}));
 const UB=Object.fromEntries(U.map(u=>[u.id,u]));
 const COURTR=['Pr','Pc','Rn','Cv'];
-const SIGNN={};U.forEach(u=>{if(u.sign)SIGNN[u.sign]=(SIGNN[u.sign]||0)+1});
+const SIGNN={};U.forEach(u=>{for(const k of u.signs)SIGNN[k]=(SIGNN[k]||0)+1});
 const signTh=k=>(SIGNN[k]||0)>=4?[3,4]:[3];
 const MINORS=U;
+// Patronos: cada signo tem um Arcano Maior como patrono
+const PATSIGN={imperador:'cancer',forca:'scorpio',temperanca:'pisces',carro:'libra',morte:'aquarius',lua:'gemini',justica:'capricorn',estrela:'taurus',enamorados:'virgo',diabo:'aries',papa:'leo',eremita:'sagittarius'};
+const PATG=.6,PATB=1.6;
 
 const MJ={};
 const mj=(id,num,pt,en,title,suit,u,fx,pd,mech,md)=>{MJ[id]={id,num,pt,en,title,suit,u,fx,pd,mech,md,slug:SL(en)}};
@@ -783,10 +823,9 @@ mj('lua','XVIII','A Lua','The Moon','A Ilusória','C',{hp:850,atk:70,rng:4,cd:10
 mj('sol','XIX','O Sol','The Sun','O Radiante','W',{hp:1000,atk:85,rng:3,cd:8,sp:'burn',pw:3.2},{atk:.1,hp:.1},'+10% de dano e de vida.',null,'');
 mj('julgamento','XX','Julgamento','Judgement','O Anjo Final','C',{hp:1100,atk:80,rng:4,cd:10,sp:'snipe',pw:3.8},{dr:.1,atk:.08},'-10% de dano recebido e +8% de dano.','trumpet','Veredito: a cada 8s fere todo o time inimigo, mais forte quanto mais Arcanos Maiores o inimigo tem.');
 mj('mundo','XXI','O Mundo','The World','A Mãe Original','C',{hp:1800,atk:90,rng:4,cd:10,sp:'tide',pw:2.6},{},'','wail','A deusa que se despedaçou. Lamento a cada 6s, regenera e invoca estilhaços. Cada Arcano Maior seu a enfraquece.');
-const MAJSIGN={imperador:'aries',papa:'taurus',enamorados:'gemini',carro:'cancer',forca:'leo',eremita:'virgo',justica:'libra',morte:'scorpio',temperanca:'sagittarius',diabo:'capricorn',estrela:'aquarius',lua:'pisces'};
-for(const k in MAJSIGN)MJ[k].sign=MAJSIGN[k];
+for(const k in PATSIGN)MJ[k].sign=PATSIGN[k];
 const MJU={};
-for(const id in MJ){const m=MJ[id];MJU['M:'+id]={id:'M:'+id,s:m.suit,n:m.pt,r:m.num,c:0,major:true,mid:id,sign:m.sign||null,...m.u}}
+for(const id in MJ){const m=MJ[id];MJU['M:'+id]={id:'M:'+id,s:m.suit,n:m.pt,r:m.num,c:0,major:true,mid:id,sign:m.sign||null,signs:m.sign?[m.sign]:[],...m.u}}
 const defOf=id=>id.startsWith('M:')?MJU[id]:UB[id];
 const MART=slug=>'assets/arcanamajor/'+slug+'|assets/'+slug;
 const artOf=id=>id.startsWith('M:')?MART(MJ[id.slice(2)].slug):'assets/'+SL(UB[id].n);
@@ -803,7 +842,7 @@ const FLOORS=[];ACTS.forEach((a,ai)=>a.duels.forEach((d,si)=>FLOORS.push({opp:d,
 const KARMA=10,EQUIPMAX=3;
 // Chance de cada nível (tier) aparecer na loja: começa quase só nos baratos e inverte a cada duelo.
 const shopLevel=S=>S.fl*0.6+(S.embate-1)*1.2;
-function tierW(g){const t3=clamp(5*g-10,0,70),t1=clamp(82-5*g,8,82);return[t1,Math.max(0,100-t1-t3),t3]}
+function tierW(g){const t4=clamp(2*(g-9),0,16),t3=Math.min(clamp(5*g-10,0,70),100-t4-8),t1=clamp(82-5*g,8,82-t4/2);return[t1,Math.max(0,100-t1-t3-t4),t3,t4]}
 const POOLN=9;
 
 const MUPS=[
@@ -841,10 +880,22 @@ function toggleEquip(S,id){
 }
 function sumFx(ids){
  const m={atk:0,hp:0,cd:0,crit:0,dr:0,regen:0,kh:0,sh:0,mana:0,ls:0,th:0,sp:0,dodge:0};
- for(const id of ids){const f=MJ[id].fx;for(const k in f)m[k]=(m[k]||0)+f[k]}
+ for(const id of ids){const f=MJ[id].fx,g=PATSIGN[id]?PATG:1;for(const k in f)m[k]=(m[k]||0)+f[k]*g}
  return m;
 }
+// bônus extra dos patronos para unidades do signo deles (só efeitos por unidade)
+function patFx(ids,signs){
+ const m={};if(!signs||!signs.length)return m;
+ for(const id of ids){const s=PATSIGN[id];if(!s||!signs.includes(s))continue;const f=MJ[id].fx;for(const k in f)if(k!=='kh')m[k]=(m[k]||0)+f[k]*(PATB-PATG)}
+ return m;
+}
+function sideKh(ids,defs){
+ let k=sumFx(ids).kh;
+ for(const id of ids){const s=PATSIGN[id],f=MJ[id].fx;if(s&&f.kh&&defs.some(d=>d&&d.signs&&d.signs.includes(s)))k+=f.kh*(PATB-PATG)}
+ return k;
+}
 const getMods=S=>sumFx(S.equip);
+const m_add=(o,k,v)=>{o[k]=(o[k]||0)+v};
 const boardCount=S=>S.board.filter(Boolean).length;
 const embateGold=S=>S.embate<=1?10+2*S.fl+2*S.ups.gold:6+S.fl+S.ups.gold;
 const shopSize=S=>6+(S.ups.shop||0);
@@ -871,7 +922,7 @@ const addFx=(f,o)=>{for(const k in o)f[k]=(f[k]||0)+o[k]};
 function synOf(list){
  const signSet={},suitSet={},valSet={},ents=[],courtSet=new Set();
  for(const {i,d,id} of list){ents.push({i,d});
-  if(d.sign)(signSet[d.sign]??=new Set()).add(id);
+  for(const sg of d.signs||[])(signSet[sg]??=new Set()).add(id);
   if(SUITKEYS.includes(d.s))(suitSet[d.s]??=new Set()).add(id);
   if(!d.major)(valSet[d.r]??=new Set()).add(d.s);
   if(!d.major&&COURTR.includes(d.r))courtSet.add(d.r)}
@@ -883,7 +934,7 @@ function synOf(list){
  for(const {i,d} of ents){
   const f={};
   if(!d.major&&court.tier&&COURTR.includes(d.r))addFx(f,SIGNFX.corte[court.tier-1]);
-  if(d.sign&&signs[d.sign].tier)addFx(f,SIGNFX[d.sign][signs[d.sign].tier-1]);
+  for(const sg of d.signs||[])if(signs[sg].tier)addFx(f,SIGNFX[sg][signs[sg].tier-1]);
   if(suits[d.s]&&suits[d.s].tier)addFx(f,SUITFX[d.s]);
   if(!d.major&&vals[d.r]&&vals[d.r].tier)addFx(f,VALFX);
   byIdx[i]=f;
@@ -903,7 +954,7 @@ function rollShop(S){
  for(const id of S.shop)if(id)S.pool[id]++;
  const w=tierW(shopLevel(S));S.shop=[];
  for(let i=0;i<shopSize(S);i++){
-  const r=rnd(100);let t=1;if(r>=w[0]){t=2;if(r>=w[0]+w[1])t=3}
+  const r=rnd(100);let t=1;if(r>=w[0]){t=2;if(r>=w[0]+w[1]){t=3;if(r>=w[0]+w[1]+w[2])t=4}}
   let ids=MINORS.filter(u=>u.c===t&&S.pool[u.id]>0);
   if(!ids.length)ids=MINORS.filter(u=>S.pool[u.id]>0);
   if(!ids.length){S.shop.push(null);continue}
@@ -986,7 +1037,7 @@ const EXTRA=.2;
 function makePlan(S){
  const oid=S.opp,g=S.fl,m=MJ[oid];
  const n0=clamp(1+Math.floor(g*.22),1,3),n=clamp(Math.max(n0,maxU(S)-1),1,8);
- const pool=MINORS.filter(u=>u.c<=(g<3?2:3));
+ const pool=MINORS.filter(u=>u.c<=(g<3?2:g<12?3:4));
  const eb=1+0.07*(S.embate-1),sc=1;
  const list=[];
  for(let i=0;i<n;i++){
@@ -1016,7 +1067,7 @@ function buildPlayer(S){
  S.board.forEach((inst,i)=>{
   if(!inst)return;
   const b=defOf(inst.id),sm=STAR[inst.star-1];
-  const fx=syn.byIdx[i]||{};
+  const fx={...(syn.byIdx[i]||{})},px=patFx(S.equip,b.signs);for(const k in px)m_add(fx,k,px[k]);
   const A=m.atk+(fx.atk||0),H=m.hp+(fx.hp||0);
   const hp=Math.max(50,b.hp*sm*(1+H));
   const mm=MANA[b.c];
@@ -1041,9 +1092,10 @@ function buildEnemies(plan){
  else out.push(mk(plan.boss.x,plan.boss.y,plan.boss.hp));
  for(const e of out){const f=psyn.byIdx[e.si]||{};
   e.atk*=1+(f.atk||0);e.hp*=1+(f.hp||0);e.maxhp=e.hp;e.cd*=Math.max(.05,1-(f.cd||0));e.crit+=f.crit||0;e.dr+=f.dr||0;e.regen+=f.regen||0;e.sh+=e.hp*(f.sh||0);e.ls+=f.ls||0;e.th+=f.th||0;e.dodge+=f.dodge||0;e.spm+=f.sp||0;e.heal+=f.heal||0;e.mana+=e.manaMax*0+(f.mana||0);if(f.burn)e.burnPow=e.atk*f.burn;if(f.slow)e.slowOn=f.slow}
- const am=sumFx(plan.abil||[]);out.kh=am.kh;
+ const am=sumFx(plan.abil||[]);out.kh=sideKh(plan.abil||[],out.map(e=>UB[e.id]||MJU[e.id]));
  for(const e of out){
-  e.atk*=1+am.atk;e.hp*=1+am.hp;e.maxhp=e.hp;e.cd*=Math.max(.05,1-am.cd);e.crit+=am.crit;e.dr+=am.dr;e.regen+=am.regen;e.sh+=e.hp*am.sh;e.ls+=am.ls;e.th+=am.th;e.dodge+=am.dodge;e.spm+=am.sp;e.mana+=e.manaMax*am.mana;
+  const px=patFx(plan.abil||[],(UB[e.id]||MJU[e.id]||{}).signs);
+  e.atk*=1+am.atk+(px.atk||0);e.hp*=1+am.hp+(px.hp||0);e.maxhp=e.hp;e.cd*=Math.max(.05,1-am.cd-(px.cd||0));e.crit+=am.crit+(px.crit||0);e.dr+=am.dr+(px.dr||0);e.regen+=am.regen+(px.regen||0);e.sh+=e.hp*(am.sh+(px.sh||0));e.ls+=am.ls;e.th+=am.th+(px.th||0);e.dodge+=am.dodge+(px.dodge||0);e.spm+=am.sp+(px.sp||0);e.mana+=e.manaMax*am.mana;
  }
  for(const e of out){
   if(mj_.mech==='garden')e.regen=Math.max(e.regen,.015);
@@ -1232,7 +1284,7 @@ class Sim{
 function buildSim(S){
  const m=getMods(S);
  const mech=MJ[S.plan.boss.bid].mech;
- const EN=buildEnemies(S.plan);return new Sim(buildPlayer(S),EN,{mech,kh:m.kh,khE:EN.kh||0,owned:S.majors.length-1});
+ const EN=buildEnemies(S.plan);return new Sim(buildPlayer(S),EN,{mech,kh:sideKh(S.equip,Object.values(S.board).filter(Boolean).map(x=>defOf(x.id))),khE:EN.kh||0,owned:S.majors.length-1});
 }
 function embateEnd(S,sim){
  const win=sim.result==='win';
@@ -1299,7 +1351,7 @@ function majorArt(id,cls=''){const m=MJ[id];return cardArt(MART(m.slug),`<span c
 function minorArt(id,cls=''){const u=UB[id];return cardArt(artOf(id),`<span class="fsu s-${u.s}">${icon(u.s)}</span><span class="fnum">${u.r}</span><span class="fname">${u.n}</span>`,cls)}
 function utHTML(id,star){
  const d=defOf(id);
- return`<div class="ut s-${d.s}"><span class="fb ${String(d.r).length>2?'l':''}">${d.r}</span>${imgT(artOf(id))}${d.sign?`<span class="sgl">${SIGNS[d.sign].g}</span>`:''}<span class="rkc">${d.r}</span><span class="st">${'★'.repeat(star||1)}</span></div>`;
+ return`<div class="ut s-${d.s}"><span class="fb ${String(d.r).length>2?'l':''}">${d.r}</span>${imgT(artOf(id))}${d.signs&&d.signs.length?`<span class="sgl ${d.signs.length>1?'m':''}">${sgG(d)}</span>`:''}<span class="rkc">${d.r}</span><span class="st">${'★'.repeat(star||1)}</span></div>`;
 }
 function toast(m){
  let t=$('.toast');if(!t){t=document.createElement('div');t.className='toast';document.body.appendChild(t)}
@@ -1551,7 +1603,7 @@ function pvpTryFight(me){
  RNGF=mulberry32(me.seed);
  const hb=me.host?S.board:me.oppBoard,gb=me.host?me.oppBoard:S.board,he=me.host?me.equip:me.oppEquip,ge=me.host?me.oppEquip:me.equip;
  const A=buildSide(hb,he,0),B=buildSide(gb,ge,1);
- sim=new Sim(A,B,{mech:null,kh:sumFx(he).kh,khE:sumFx(ge).kh,owned:0});
+ sim=new Sim(A,B,{mech:null,kh:sideKh(he,hb.filter(Boolean).map(x=>defOf(x.id))),khE:sideKh(ge,gb.filter(Boolean).map(x=>defOf(x.id))),owned:0});
  S.phase='combat';S.oppBoard=me.oppBoard;me.oppReady=false;me.myReady=false;me.seed=0;
  els.clear();$('#units').innerHTML='';
  liveSync();syncAll();clearInterval(timer);timer=setInterval(pvpTick,100);
@@ -1623,7 +1675,7 @@ function codex(){
  <h2>Arcanos Maiores</h2>
  <div class="cdx">${Object.values(MJ).map(m=>`<div><small>${m.num} · ${m.en.toUpperCase()}</small><b>${m.pt} · ${m.title}</b><i>${m.pd?'Bônus: '+m.pd:''}</i><i>${m.md?'Duelo: '+m.md:'Só aparece como prêmio.'}</i></div>`).join('')}</div>
  <h2>Arcanos Menores</h2><p class="sub">52 cartas com os nomes de Aleister Crowley: do 2 ao 10 e Princesa, Príncipe, Rainha e Cavaleiro de cada naipe. A loja sorteia de um baralho com 9 cópias de cada uma. Cartas numeradas e cortes têm um Signo do Zodíaco (Thoth). Princesas não têm signo.</p>
- <div class="cdx">${Object.keys(SIGNS).map(k=>`<div><small>${SIGNS[k].g} SIGNO</small><b>${SIGNS[k].n}</b><i>(3) ${fxDesc(SIGNFX[k][0])}</i><i>(4) ${fxDesc(SIGNFX[k][1])}</i><i>${MINORS.filter(u=>u.sign===k).map(u=>u.n).join(', ')}${Object.keys(MAJSIGN).filter(m=>MAJSIGN[m]===k).map(m=>', '+MJ[m].pt).join('')}</i></div>`).join('')}</div>
+ <div class="cdx">${Object.keys(SIGNS).map(k=>`<div><small>${SIGNS[k].g} SIGNO</small><b>${SIGNS[k].n}</b><i>(3) ${fxDesc(SIGNFX[k][0])}</i><i>(4) ${fxDesc(SIGNFX[k][1])}</i><i>${MINORS.filter(u=>u.signs.includes(k)).map(u=>u.n).join(', ')}${Object.keys(PATSIGN).filter(m=>PATSIGN[m]===k).map(m=>' · Patrono: '+MJ[m].pt).join('')}</i></div>`).join('')}</div>
  <div class="cdx">${SUITKEYS.map(s=>`<div><small>${SUITS[s].el.toUpperCase()} · NAIPE</small><b>${icon(s)} ${SUITS[s].n}</b><i>(5 diferentes) ${fxDesc(SUITFX[s])}</i></div>`).join('')}<div><small>VALOR</small><b>Quatro iguais</b><i>(4, um de cada naipe) ${fxDesc(VALFX)}</i></div></div>
  <div><button class="btn" data-a="close">Fechar</button></div>`);
 }
@@ -1742,7 +1794,7 @@ function renderHead(){
 }
 function tileHTML(id,o={}){
  const d=defOf(id),tag=o.tag||'div';
- return`<${tag} class="tile s-${d.s} ${o.cls||''}" ${o.attrs||''} data-id="${id}" data-star="${o.star||1}"><span class="pic"><span class="tfs">${icon(d.s)}</span><span class="tfb">${d.r}</span>${imgT(artOf(id))}</span>${d.sign?`<span class="sg">${SIGNS[d.sign].g}</span>`:''}<span class="rk">${d.r}</span>${o.price!=null?`<span class="pr">${o.price}</span>`:''}<span class="nmb">${esc(d.n)}${(o.star||1)>1?` <em>${'★'.repeat(o.star)}</em>`:''}</span></${tag}>`;
+ return`<${tag} class="tile s-${d.s} ${o.cls||''}" ${o.attrs||''} data-id="${id}" data-star="${o.star||1}"><span class="pic"><span class="tfs">${icon(d.s)}</span><span class="tfb">${d.r}</span>${imgT(artOf(id))}</span>${d.signs&&d.signs.length?`<span class="sg">${sgG(d)}</span>`:''}<span class="rk">${d.r}</span>${o.price!=null?`<span class="pr">${o.price}</span>`:''}<span class="nmb">${esc(d.n)}${(o.star||1)>1?` <em>${'★'.repeat(o.star)}</em>`:''}</span></${tag}>`;
 }
 let seenU=new Map(),flagU=new Map(),lastGold=null;
 const flagCls=uid=>{const f=flagU.get(uid);return f==='new'?' tnew':f==='up'?' tup':''};
@@ -1750,7 +1802,9 @@ function calcFlags(){flagU=new Map();const cur=new Map();for(const e of allUnits
 function renderBench(){
  $('#bench').innerHTML=S.bench.map((x,i)=>x?tileHTML(x.id,{star:x.star,price:UB[x.id]?UB[x.id].c:null,cls:(sel&&sel.k==='b'&&sel.i===i?'sel':'')+flagCls(x.uid),attrs:`data-a="bench:${i}" draggable="true" data-drag="b:${i}"`}):`<div class="tile empty" data-a="bench:${i}"></div>`).join('');
 }
-const signTxt=d=>d.sign?SIGNS[d.sign].g+' '+SIGNS[d.sign].n:'sem signo';
+const sgG=d=>(d.signs||[]).map(k=>SIGNS[k].g).join('');
+const signTxt=d=>d.signs&&d.signs.length?d.signs.map(k=>SIGNS[k].g+' '+SIGNS[k].n).join(' · '):'sem signo';
+const patOf=d=>(d.signs||[]).map(k=>Object.keys(PATSIGN).find(m=>PATSIGN[m]===k)).filter(Boolean).map(m=>MJ[m].pt);
 const rankName=u=>RANKN[u.r]?RANKN[u.r]+' de '+SUITS[u.s].n:u.r+' de '+SUITS[u.s].n;
 function infoHTML(d){
  const rn=rankName(d);
@@ -1766,7 +1820,7 @@ function renderShop(){
 const pc=v=>Math.round(v*100);
 const FXT={atk:v=>`+${pc(v)}% de dano`,hp:v=>`+${pc(v)}% de vida`,cd:v=>`+${pc(v)}% de velocidade`,crit:v=>`+${pc(v)}% de crítico`,dr:v=>`-${pc(v)}% de dano recebido`,regen:v=>`regenera ${pc(v)}% da vida por s`,sh:v=>`escudo inicial de ${pc(v)}%`,th:v=>`reflete ${pc(v)}% do dano`,ls:v=>`${pc(v)}% de roubo de vida`,mana:v=>`+${v} de energia inicial`,heal:v=>`+${pc(v)}% de cura`,burn:()=>'queimadura',slow:()=>'retarda alvos',dodge:v=>`${pc(v)}% de esquiva`,sp:v=>`+${pc(v)}% de poder das magias`};
 const fxDesc=f=>Object.keys(f).map(k=>FXT[k](f[k])).join(', ');
-const valLabel=r=>RANKPL[r]||('Valor '+r);
+const valLabel=r=>RANKPL[r]||(r==='A'?'Ases':'Valor '+r);
 function synLine(color,glyph,name,c,need,tier,lines){
  const act=lines.slice(0,tier).map(l=>l.t).pop();
  return`<div class="sy2 ${tier?'act':''}" style="color:${color}"><span class="g">${glyph}</span><b>${name}</b><span class="num">${Math.min(c,need)}/${need}</span><span class="dots">${lines.map((l,i)=>`<i class="${i<tier?'on':''}"></i>`).join('')}</span>${act?`<small>${act}</small>`:''}</div>`;
@@ -1793,12 +1847,12 @@ function renderSyn(){
  if(S.pvp){foe.innerHTML=`<div class="pn-row">${pnames(S.oppEquip||[])}</div>`+(S.oppBoard?synHTML(computeSyn({board:S.oppBoard})):'');return}
  foe.innerHTML=`<div class="pn-row">${pnames(S.abil)}</div>${S.plan.mech?`<div class="mechl">${esc(S.plan.mech)}</div>`:''}`+synHTML(planSyn(S.plan));
 }
-const signLine=d=>(d.sign?SIGNS[d.sign].g+' '+SIGNS[d.sign].n:(COURTR.includes(d.r)&&!d.major?'♛ Alta Corte':'Sem signo'))+' / '+SUITS[d.s].n;
+const signLine=d=>(d.signs&&d.signs.length?signTxt(d):(COURTR.includes(d.r)&&!d.major?'♛ Alta Corte':'Sem signo'))+' / '+SUITS[d.s].n;
 function prevHTML(id,star){
  const d=defOf(id),sm=STAR[(star||1)-1];
  const art=d.major?majorArt(d.mid):minorArt(id);
  const rn=d.major?MJ[d.mid].num+' · '+MJ[d.mid].title:rankName(d);
- return`<div class="prevc">${art}<div class="pvt"><div class="pn">${d.n} ${(star||1)>1?'<em>'+'★'.repeat(star)+'</em>':''}</div><div class="ps">${signLine(d)}</div>${rn===d.n?'':`<div class="pr2">${rn}</div>`}<div class="pst">Vida <b class="num">${Math.round(d.hp*sm)}</b> · Dano <b class="num">${Math.round(d.atk*sm)}</b> · Alcance <b class="num">${d.rng}</b></div><div class="psp"><span class="s-${d.s}">${SP[d.sp][0]}:</span> ${SP[d.sp][1]}</div></div></div>`;
+ return`<div class="prevc">${art}<div class="pvt"><div class="pn">${d.n} ${(star||1)>1?'<em>'+'★'.repeat(star)+'</em>':''}</div><div class="ps">${signLine(d)}</div>${rn===d.n?'':`<div class="pr2">${rn}</div>`}${!d.major&&patOf(d).length?`<div class="pr2">Patrono: ${patOf(d).join(' · ')}</div>`:''}<div class="pst">Vida <b class="num">${Math.round(d.hp*sm)}</b> · Dano <b class="num">${Math.round(d.atk*sm)}</b> · Alcance <b class="num">${d.rng}</b></div><div class="psp"><span class="s-${d.s}">${SP[d.sp][0]}:</span> ${SP[d.sp][1]}</div></div></div>`;
 }
 function defPrev(){
  const x=sel&&getSlot(S,sel);
@@ -1817,7 +1871,7 @@ function renderMenu(){
  <div class="btns"><button class="btn" data-a="reroll" ${S.gold<rerollCost(S)?'disabled':''}>Atualizar · ${rerollCost(S)}</button>${x&&!isMajorInst(x)?`<button class="btn" data-a="sell">Vender · ${sellValue(x)}</button>`:''}</div>
  <button class="btn big" data-a="fight" ${boardCount(S)&&S.phase==='prep'?'':'disabled'}>${S.pvp&&S.phase==='wait'?'Aguardando oponente…':'Lutar'}</button>
  <button class="btn" data-a="forfeit">${S.pvp?'Desistir da partida':'Desistir do combate'}</button>`;
- const od=$('#odds');if(od){const w=tierW(shopLevel(S));od.textContent='· Chance T1 '+w[0].toFixed(0)+'% · T2 '+w[1].toFixed(0)+'% · T3 '+w[2].toFixed(0)+'%'}
+ const od=$('#odds');if(od){const w=tierW(shopLevel(S));od.textContent='· Chance T1 '+w[0].toFixed(0)+'% · T2 '+w[1].toFixed(0)+'% · T3 '+w[2].toFixed(0)+'%'+(w[3]>0?' · T4 '+w[3].toFixed(0)+'%':'')}
 }
 
 let FLIP=false;
