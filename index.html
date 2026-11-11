@@ -456,12 +456,10 @@ button.rung:hover{border-color:var(--gold-d)}
 .lgbtns{position:relative;z-index:1;align-self:end;display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
 .face .fi{inset:auto;left:-5%;top:-5%;width:110%;height:110%}
 .face .cr{left:-38%;top:-42%;width:176%}
-.u .ut{clip-path:polygon(0 16%,50% 0,100% 16%,100% 100%,0 100%)}
-.u .ut::after{content:'';position:absolute;inset:0;background:currentColor;z-index:4;pointer-events:none;clip-path:polygon(0 16%,50% 0,100% 16%,100% calc(16% + 7px),50% 7px,0 calc(16% + 7px))}
-.u.t1 .ut{clip-path:polygon(0 0,100% 0,100% 84%,50% 100%,0 84%)}
-.u.t1 .ut::after{clip-path:polygon(0 calc(84% - 7px),50% calc(100% - 7px),100% calc(84% - 7px),100% 84%,50% 100%,0 84%)}
-.u:not(.t1) .ut .sgl,.u:not(.t1) .ut .rkc{top:18%}
-.u.t1 .ut .st{bottom:17%}
+.u .ut{border-width:2px}
+.u .in:has(.s-W){color:var(--fire)}.u .in:has(.s-C){color:var(--water)}.u .in:has(.s-S){color:var(--air)}.u .in:has(.s-P){color:var(--earth)}
+.u .in::before{content:'';position:absolute;left:8%;right:8%;top:-11%;height:11%;background:currentColor;pointer-events:none;clip-path:polygon(0 100%,50% 0,100% 100%,100% calc(100% - 2.5px),50% 2.5px,0 calc(100% - 2.5px))}
+.u.t1 .in::before{top:auto;bottom:-11%;clip-path:polygon(0 0,50% 100%,100% 0,100% 2.5px,50% calc(100% - 2.5px),0 2.5px)}
 .u.boss .in{filter:drop-shadow(0 0 6px rgba(184,69,58,.9))}
 .tile .pic img.bt,.ut img.bt{position:absolute!important;inset:0!important;left:0!important;top:0!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:50% 50%!important;transform:none!important;z-index:1}
 .tile .pic .tfs,.tile .pic .tfb{z-index:0}
