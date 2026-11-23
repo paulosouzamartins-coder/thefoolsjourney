@@ -1,4 +1,5 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Torre dos Arcanos</title>
+<!doctype html>
+<title>Torre dos Arcanos</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&display=swap">
 <style>
@@ -117,7 +118,7 @@ h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;letter-spacing:.05e
 .shopbar .shop{padding-top:12px}
 .lcol,.rcol{display:grid;gap:14px;min-width:0;align-content:start}
 .boardwrap{position:relative}
-.board{position:relative;aspect-ratio:2.1/1;width:100%;container-type:inline-size;background:radial-gradient(120% 90% at 30% 20%,#2a2a1b,#17160f);cursor:pointer;user-select:none;touch-action:manipulation;overflow:hidden}
+.board{position:relative;aspect-ratio:2.1/1;width:100%;container-type:inline-size;background:#0a0d1e;cursor:pointer;user-select:none;touch-action:manipulation;overflow:hidden}
 @media(max-width:980px){.board{aspect-ratio:8/6.6}}
 .cells{position:absolute;inset:0;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(6,1fr)}
 .cells div{border:1px solid rgba(232,220,192,.06)}
@@ -149,6 +150,12 @@ h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;letter-spacing:.05e
 .u .hp b{position:absolute;inset:0 auto 0 0;background:rgba(255,255,255,.8)}
 .u .mp{position:absolute;left:4%;right:4%;bottom:-9%;height:3.5%;background:#000;z-index:3}
 .u .mp i{position:absolute;inset:0 auto 0 0;background:var(--water)}
+.sky{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
+.fxo{position:absolute;pointer-events:none;z-index:6}
+.fxo.prj{width:7px;height:7px;border-radius:50%;transform:translate(-50%,-50%)}
+.fxo.heal{width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%)}
+.fxo.clash{width:5%;min-width:22px;aspect-ratio:1;transform:translate(-50%,-50%);filter:drop-shadow(0 0 4px #ffd27a)}
+.fxo.clash svg{width:100%;height:100%;display:block}
 .fxl{position:absolute;inset:0;pointer-events:none;overflow:hidden;container-type:inline-size}
 .fl{position:absolute;font-family:var(--num);font-weight:700;font-size:2.2cqw;text-shadow:0 1px 2px #000;animation:fl .8s ease-out forwards;transform:translate(-50%,0)}
 .fl.d{color:#ffd9b0}.fl.c{color:#ffcf4a;font-size:3cqw}.fl.h{color:#8fe07a}.fl.t{color:var(--gold);font-family:var(--display);font-size:2cqw;letter-spacing:.06em}
@@ -740,6 +747,29 @@ const SP={
  leap:['Salto de Fé','Escuda e acelera todos os aliados.']
 };
 
+const SHCAP=.3;
+function spellTxt(d,sm){
+ sm=sm||1;const A=d.atk*sm,H=d.hp*sm,p=d.pw||0,f=x=>Math.round(x),D=f(A*p);
+ switch(d.sp){
+  case'burn':return`Explode em área (alvo e colados): ${D} de dano e incendeia, ${f(A*.25)} de dano por segundo durante 3s.`;
+  case'bolt':return`Golpe único: ${D} de dano e incendeia, ${f(A*.25)} por segundo durante 3s.`;
+  case'frenzy':return`Cura ${f(A*.8)} de vida e ataca com o dobro da velocidade por 5s.`;
+  case'taunt':return`Ganha ${f(H*Math.min(p,SHCAP))} de escudo (${f(Math.min(p,SHCAP)*100)}% da vida; o escudo total não passa de ${f(SHCAP*100)}%).`;
+  case'shield':return`Escuda os aliados num raio de 2 casas em ${f(Math.min(p,SHCAP)*100)}% da vida máxima de cada um (o escudo total não passa de ${f(SHCAP*100)}%).`;
+  case'heal':return`Cura o aliado mais ferido em ${D} de vida.`;
+  case'healall':return`Cura todos os aliados em ${f(A*p*.6)} de vida.`;
+  case'stun':return`Causa ${D} de dano e paralisa o alvo por 1,5s.`;
+  case'tide':return`Causa ${D} de dano aos inimigos num raio de 2 casas e os retarda (+40% no tempo de recarga) por 3s.`;
+  case'snipe':return`Causa ${D} de dano ao inimigo com menos vida.`;
+  case'dash':return`Salta até o fundo inimigo e causa ${D} de dano.`;
+  case'multi':return`Causa ${D} de dano a cada um dos 3 inimigos mais próximos.`;
+  case'drain':return`Causa ${D} de dano ao alvo e cura ${f(A*p*.8)} de vida.`;
+  case'quake':return`Causa ${D} de dano aos inimigos colados e os paralisa por 1s.`;
+  case'leap':return`Todos os aliados ganham escudo de ${f(Math.min(.1+p,SHCAP)*100)}% da própria vida máxima (o escudo total não passa de ${f(SHCAP*100)}%) e ficam 30% mais rápidos por 4s.`;
+ }
+ return SP[d.sp][1];
+}
+
 const SUITKEYS=['W','C','S','P'];
 const RANKN={Pr:'Princesa',Pc:'Príncipe',Rn:'Rainha',Cv:'Cavaleiro'};
 const RANKPL={Pr:'Princesas',Pc:'Príncipes',Rn:'Rainhas',Cv:'Cavaleiros'};
@@ -749,7 +779,7 @@ const SIGNS={
  leo:{n:'Leão',g:'♌︎'},virgo:{n:'Virgem',g:'♍︎'},libra:{n:'Libra',g:'♎︎'},scorpio:{n:'Escorpião',g:'♏︎'},
  sagittarius:{n:'Sagitário',g:'♐︎'},capricorn:{n:'Capricórnio',g:'♑︎'},aquarius:{n:'Aquário',g:'♒︎'},pisces:{n:'Peixes',g:'♓︎'},corte:{n:'Alta Corte',g:'♛︎'}};
 const SPRNG={burn:1,bolt:2,frenzy:1,taunt:1,shield:2,heal:3,healall:3,stun:2,tide:3,snipe:4,dash:1,multi:3,drain:1,quake:1};
-const SPPW={burn:1.6,bolt:2.8,frenzy:1,taunt:.32,shield:.15,heal:2.8,healall:2.4,stun:1.4,tide:2,snipe:3.2,dash:2.4,multi:1.25,drain:2.4,quake:1.4};
+const SPPW={burn:1.6,bolt:2.8,frenzy:1,taunt:.18,shield:.1,heal:2.8,healall:2.4,stun:1.4,tide:2,snipe:3.2,dash:2.4,multi:1.25,drain:2.4,quake:1.4};
 const ARCH={W:{cd:9},C:{cd:10},S:{cd:9.5},P:{cd:10}};
 const TIERPW=[1,1.15,1.3,1.45];
 // Base de dados: [naipe, valor, nome, tier, vida, dano, signos, magia]
@@ -826,7 +856,7 @@ mj('fool','0','O Louco','The Fool','O Jogador','D',{hp:700,atk:42,rng:1,cd:9,sp:
 mj('mago','I','O Mago','The Magician','O Artífice','W',{hp:800,atk:80,rng:3,cd:9,sp:'bolt',pw:3.4},{atk:.15},'Suas unidades têm +15% dano de ataque.','trick','Truque: a cada 7s troca de lugar duas unidades inimigas.');
 mj('sacerdotisa','II','A Sacerdotisa','The High Priestess','O Véu de Lua','C',{hp:850,atk:70,rng:4,cd:10,sp:'stun',pw:2.6},{sp:.2,mana:.15},'Suas unidades recebem 15% de energia inicial e suas magias causam +20% de dano.','riddle','Enigma: a cada 7s paralisa uma unidade inimiga por 1,2s.');
 mj('imperatriz','III','A Imperatriz','The Empress','A Mãe Terra','C',{hp:1000,atk:55,rng:3,cd:10,sp:'healall',pw:2.4},{kh:.03,regen:.005},'Suas unidades regeneram 0,5% de vida por segundo. Cada inimigo abatido restaura 3% de vida de suas unidades.','garden','Jardim: a cada 10s cura 12% da vida de todas as suas unidades.');
-mj('imperador','IV','O Imperador','The Emperor','O Trono de Ferro','P',{hp:1300,atk:75,rng:1,cd:10,sp:'taunt',pw:.5},{dr:.08,sh:.12},'Suas unidades recebem -8% de dano. E recebem um escudo inicial de 12% da vida máx.','order','Ordem: a cada 10s concede às suas unidades um escudo de 15% da vida.');
+mj('imperador','IV','O Imperador','The Emperor','O Trono de Ferro','P',{hp:1300,atk:75,rng:1,cd:10,sp:'taunt',pw:.5},{dr:.06,sh:.10},'Suas unidades recebem -6% de dano e um escudo inicial de 10% da vida máx.','order','Ordem: a cada 10s concede às suas unidades um escudo de 15% da vida.');
 mj('papa','V','O Papa','The Hierophant','O Dogma','P',{hp:1100,atk:60,rng:3,cd:11,sp:'shield',pw:.22},{hp:.10,dr:.04},'Suas unidades têm +10% de vida e recebem -4% de dano.','heresy','Heresia: a cada 6s paralisa a unidade inimiga mais forte. Com metade da vida, chama dois acólitos.');
 mj('enamorados','VI','Os Enamorados','The Lovers','O Casal','C',{hp:900,atk:85,rng:2,cd:9,sp:'multi',pw:1.8},{crit:.15},'Suas unidades têm +15% de chance de crítico.','arrow','Flechada: a cada 8s atinge a unidade inimiga mais forte e a mais fraca com 150% do dano.');
 mj('carro','VII','O Carro','The Chariot','O Conquistador','W',{hp:900,atk:80,rng:1,cd:8,sp:'dash',pw:2.5},{cd:.15},'Suas unidades têm +15% de velocidade de ataque.','charge','Investida: a cada 6s salta sobre a unidade inimiga mais recuada.');
@@ -845,7 +875,7 @@ mj('sol','XIX','O Sol','The Sun','O Radiante','W',{hp:1000,atk:85,rng:3,cd:8,sp:
 mj('julgamento','XX','Julgamento','Judgement','O Anjo Final','C',{hp:1100,atk:80,rng:4,cd:10,sp:'snipe',pw:3.8},{dr:.07,atk:.08},'-7% de dano recebido e +8% de dano.','trumpet','Veredito: a cada 8s fere todo o time inimigo, mais forte quanto mais Arcanos Maiores o inimigo tem.');
 mj('mundo','XXI','O Mundo','The World','A Mãe Original','C',{hp:1800,atk:90,rng:4,cd:10,sp:'tide',pw:2.6},{},'','wail','A deusa que se despedaçou. Lamento a cada 6s e invoca estilhaços.');
 const PATTXT={
- imperador:'recebem -16% de dano e um escudo inicial de 24% da vida máx.',
+ imperador:'recebem -12% de dano e um escudo inicial de 20% da vida máx.',
  forca:'têm +40% de vida.',
  temperanca:'regeneram 1% da vida por segundo e têm +20% de poder das magias.',
  carro:'têm +30% de velocidade de ataque.',
@@ -857,6 +887,7 @@ const PATTXT={
  diabo:'têm +50% de dano de ataque.',
  papa:'têm +20% de vida e recebem -8% de dano.',
  eremita:'refletem 16% do dano recebido de ataques básicos.'};
+for(const k in MJ){const u=MJ[k].u;MJ[k].md='Poder final — '+SP[u.sp][0]+': '+spellTxt({...u,s:MJ[k].suit});}
 for(const k in PATSIGN){MJ[k].sign=PATSIGN[k];MJ[k].pd='Unidades de '+SIGNS[PATSIGN[k]].g+' '+SIGNS[PATSIGN[k]].n+' '+PATTXT[k]}
 const MJU={};
 for(const id in MJ){const m=MJ[id];MJU['M:'+id]={id:'M:'+id,s:m.suit,n:m.pt,r:m.num,c:0,major:true,mid:id,sign:m.sign||null,signs:m.sign?[m.sign]:[],...m.u}}
@@ -1045,7 +1076,7 @@ const SIGNFX={
  aquarius:[{heal:.4,sp:.15},{heal:.8,sp:.3}],
  pisces:[{sp:.25},{sp:.45}],
  corte:[{atk:.15,hp:.15},{atk:.3,hp:.3,cd:.1}]};
-const SUITFX={W:{atk:.3,cd:.15,burn:.15},C:{heal:.8,mana:30,slow:1},S:{crit:.3,ls:.05},P:{hp:.4,sh:.15,th:.06}};
+const SUITFX={W:{atk:.3,cd:.15,burn:.15},C:{heal:.8,mana:30,slow:1},S:{crit:.3,ls:.05},P:{hp:.1,sh:.05,atk:.35,th:.05}};
 const VALFX={atk:.25,hp:.25,cd:.1};
 const addFx=(f,o)=>{for(const k in o)f[k]=(f[k]||0)+o[k]};
 function synOf(list){
@@ -1133,7 +1164,7 @@ function moveUnit(S,from,to){
 }
 function toBench(S,i){const x=S.board[i];if(!x)return null;const f=freeBench(S);if(f<0)return'Banco lotado!';S.bench[f]=x;S.board[i]=null;return null}
 const isMajorInst=x=>x.id.startsWith('M:');
-const sellValue=x=>isMajorInst(x)?0:UB[x.id].c;
+const sellValue=x=>isMajorInst(x)?0:UB[x.id].c*3**((x.star||1)-1);
 function sellUnit(S,p){const x=getSlot(S,p);if(!x||isMajorInst(x))return false;S.pool[x.id]+=3**(x.star-1);S.gold+=sellValue(x);setSlot(S,p,null);return true}
 
 function prizeOptions(S){
@@ -1250,7 +1281,8 @@ class Sim{
  near(u,team,n,maxd=99){return this.units.filter(e=>!e.dead&&e.team===team&&this.dist(u,e)<=maxd).sort((a,b)=>this.dist(u,a)-this.dist(u,b)).slice(0,n)}
  spawn(u){if(this.alive(u.team).length>=(u.team===0?9:5))return false;this.units.push(u);this.ev.push({k:'spawn',u:u.uid});return true}
  freeNear(xs,ys){for(const x of xs)for(const y of ys)if(this.free(x,y))return{x,y};return null}
- heal(u,v){if(u.dead)return;v=Math.min(u.maxhp-u.hp,v);if(v<=0)return;u.hp+=v;this.ev.push({k:'heal',u:u.uid,v})}
+ addSh(a,v){const cap=a.maxhp*SHCAP;if(a.sh<cap)a.sh=Math.min(cap,a.sh+v)}
+ heal(u,v,f){if(u.dead)return;v=Math.min(u.maxhp-u.hp,v);if(v<=0)return;u.hp+=v;this.ev.push({k:'heal',u:u.uid,v,f})}
  dmg(src,t,amount,o={}){
   if(t.dead)return;
   if(!o.sure&&t.dodge&&RNGF()<t.dodge){this.ev.push({k:'txt',u:t.uid,s:'esquiva'});return}
@@ -1292,10 +1324,10 @@ class Sim{
    case'burn':for(const e of this.near(t,t.team,9,1)){hit(e);e.burnUntil=this.t+30;e.burnDmg=A*.25}break;
    case'bolt':hit(t);t.burnUntil=this.t+30;t.burnDmg=A*.25;break;
    case'frenzy':u.frenzy=this.t+50;this.heal(u,A*.8);break;
-   case'taunt':u.sh+=u.maxhp*pw;break;
-   case'shield':for(const a of this.near(u,u.team,9,2))a.sh+=a.maxhp*pw;break;
-   case'heal':{const a=this.alive(u.team).sort((x,y)=>x.hp/x.maxhp-y.hp/y.maxhp)[0];this.heal(a,A*pw*(1+u.heal));break}
-   case'healall':for(const a of this.alive(u.team))this.heal(a,A*pw*.6*(1+u.heal));break;
+   case'taunt':this.addSh(u,u.maxhp*pw);break;
+   case'shield':for(const a of this.near(u,u.team,9,2))this.addSh(a,a.maxhp*pw);break;
+   case'heal':{const a=this.alive(u.team).sort((x,y)=>x.hp/x.maxhp-y.hp/y.maxhp)[0];this.heal(a,A*pw*(1+u.heal),u.uid);break}
+   case'healall':for(const a of this.alive(u.team))this.heal(a,A*pw*.6*(1+u.heal),u.uid);break;
    case'stun':hit(t);t.stun=this.t+15;break;
    case'tide':for(const e of this.near(u,1-u.team,9,2)){hit(e);e.slow=this.t+30}break;
    case'snipe':{const e=this.alive(1-u.team).sort((x,y)=>x.hp-y.hp)[0];if(e)hit(e);break}
@@ -1303,7 +1335,7 @@ class Sim{
    case'multi':for(const e of this.near(u,1-u.team,3,6))hit(e);break;
    case'drain':hit(t);this.heal(u,A*pw*.8);break;
    case'quake':for(const e of this.near(u,1-u.team,9,1)){hit(e);e.stun=this.t+10}break;
-   case'leap':for(const a of this.alive(u.team)){a.sh+=a.maxhp*(.1+pw);a.haste=this.t+40}break;
+   case'leap':for(const a of this.alive(u.team)){this.addSh(a,a.maxhp*(.1+pw));a.haste=this.t+40}break;
   }
  }
  cdEff(u){return u.cd*(this.t<u.frenzy?.5:1)*(this.t<u.haste?.7:1)*(this.t<u.slow?1.4:1)}
@@ -1709,9 +1741,16 @@ function newPvpState(equip){
  P.pvp=true;P.opp=null;P.fl=2;P.g=2;P.majors=['fool',...equip];P.equip=equip.slice();P.plan=null;P.wager=null;P.abil=[];P.oppEquip=[];P.oppBoard=null;
  return P;
 }
-const pvpGold=n=>10+2*(n-1);
+const PVP_START=8,PVP_INCOME=8,PVP_WIN=3,PVP_LOSS=2,PVP_LOSS3=5;
+function pvpIncome(S,win){
+ const interest=Math.floor(S.gold/10);
+ let bonus;
+ if(win){S.lossStreak=0;bonus=PVP_WIN}else{S.lossStreak=(S.lossStreak||0)+1;bonus=S.lossStreak>=3?PVP_LOSS3:PVP_LOSS}
+ S.gold+=PVP_INCOME+interest+bonus;
+ return{base:PVP_INCOME,interest,bonus};
+}
 function initPvp(P){
- P.karma={me:KARMA,foe:KARMA};P.embate=1;P.gold=pvpGold(1);P.board=Array(BOARDN).fill(null);P.bench.fill(null);P.uid=1;
+ P.karma={me:KARMA,foe:KARMA};P.embate=1;P.gold=PVP_START;P.lossStreak=0;P.board=Array(BOARDN).fill(null);P.bench.fill(null);P.uid=1;
  P.pool=Object.fromEntries(MINORS.map(u=>[u.id,POOLN]));P.poolSnap={...P.pool};P.shop=[];rollShop(P);P.phase='prep';
 }
 function pvpStart(me){
@@ -1767,7 +1806,8 @@ function pvpApply(me){
  const v=$('#veil');if(v)v.classList.remove('on');
  sim=null;S.oppBoard=null;updateKarma();
  if(S.karma.foe<=0||S.karma.me<=0){pvpEnd(S.karma.foe<=0,'');return}
- S.embate++;S.gold+=pvpGold(S.embate);rollShop(S);S.phase='prep';sel=null;syncAll();embateText(S.embate);
+ S.embate++;const inc=pvpIncome(S,meWin);rollShop(S);S.phase='prep';sel=null;syncAll();embateText(S.embate);
+ toast(`+${inc.base+inc.interest+inc.bonus} de ouro (${inc.base} base${inc.interest?` + ${inc.interest} juros`:''} + ${inc.bonus} ${meWin?'por vencer':'por perder'})`);
 }
 function pvpEnd(win,msg){
  if(!S||!S.pvp||S.phase==='done')return;
@@ -1987,12 +2027,12 @@ function beginPrep(){
 }
 
 function buildGame(){
- seenU=new Map();lastGold=null;
+ seenU=new Map();lastGold=null;SKY=null;
  $('#app').innerHTML=`<div class="game"><div class="gh frame nr" id="gh"></div>
  <div class="gcols frame">
   <div class="bstage"><div class="bfit boardwrap">
    <div class="karma foe" id="kfoe"><div class="kbar"><i></i><span class="kt">10/10</span></div>${face(S.pvp?'fool':S.opp,'kf')}</div>
-   <div class="board" id="board"><div class="cells" id="cells"></div><div class="edge l"></div><div class="edge r"></div><div class="divider"></div><div class="units" id="units"></div><div class="fxl" id="fxl"></div><div class="veil" id="veil"></div>
+   <div class="board" id="board"><canvas class="sky" id="sky"></canvas><div class="cells" id="cells"></div><div class="edge l"></div><div class="edge r"></div><div class="divider"></div><div class="units" id="units"></div><div class="fxl" id="fxl"></div><div class="veil" id="veil"></div>
     <div class="synov foe" id="synfoe"></div><div class="synov me" id="synme"></div></div>
    <div class="karma me" id="kme">${face('fool','kf')}<div class="kbar"><i></i><span class="kt">10/10</span></div></div>
   </div></div>
@@ -2005,6 +2045,7 @@ function buildGame(){
  let c='';for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++)c+=`<div data-x="${x}" data-y="${y}" class="${y>=PROW?'me':'foe'}${x===0||x===COLS-1?' dead':''}"></div>`;
  $('#cells').innerHTML=c;
  $('#board').addEventListener('click',onBoardClick);
+ startSky();
 }
 function updateKarma(){
  if(!S||!S.karma)return;
@@ -2038,7 +2079,7 @@ const patOf=d=>(d.signs||[]).map(k=>Object.keys(PATSIGN).find(m=>PATSIGN[m]===k)
 const rankName=u=>u.r==='A'?u.n:RANKN[u.r]?RANKN[u.r]+' de '+SUITS[u.s].n:u.r+' de '+SUITS[u.s].n;
 function infoHTML(d){
  const rn=rankName(d);
- return`<b>${d.n}</b> · ${rn===d.n?'':rn+' · '}${signTxt(d)} · ${SUITS[d.s].el} · Vida ${d.hp} · Dano ${d.atk} · Alcance ${d.rng}<br><span class="s-${d.s}">${SP[d.sp][0]}:</span> ${SP[d.sp][1]}`;
+ return`<b>${d.n}</b> · ${rn===d.n?'':rn+' · '}${signTxt(d)} · ${SUITS[d.s].el} · Vida ${d.hp} · Dano ${d.atk} · Alcance ${d.rng}<br><span class="s-${d.s}">${SP[d.sp][0]}:</span> ${spellTxt(d)}`;
 }
 function renderShop(){
  $('#shop').innerHTML=S.shop.map((id,i)=>{
@@ -2095,7 +2136,7 @@ function prevHTML(id,star){
  const d=defOf(id),sm=STAR[(star||1)-1];
  const art=d.major?majorArt(d.mid):minorArt(id);
  const rn=d.major?MJ[d.mid].num+' · '+MJ[d.mid].title:rankName(d);
- return`<div class="prevc">${art}<div class="pvt"><div class="pn">${d.n} ${(star||1)>1?'<em>'+'★'.repeat(star)+'</em>':''}</div><div class="ps">${signLine(d)}</div>${rn===d.n?'':`<div class="pr2">${rn}</div>`}${!d.major&&patOf(d).length?`<div class="pr2">Patrono: ${patOf(d).join(' · ')}</div>`:''}<div class="pst">Vida <b class="num">${Math.round(d.hp*sm)}</b> · Dano <b class="num">${Math.round(d.atk*sm)}</b> · Alcance <b class="num">${d.rng}</b></div><div class="psp"><span class="s-${d.s}">${SP[d.sp][0]}:</span> ${SP[d.sp][1]}</div></div></div>`;
+ return`<div class="prevc">${art}<div class="pvt"><div class="pn">${d.n} ${(star||1)>1?'<em>'+'★'.repeat(star)+'</em>':''}</div><div class="ps">${signLine(d)}</div>${rn===d.n?'':`<div class="pr2">${rn}</div>`}${!d.major&&patOf(d).length?`<div class="pr2">Patrono: ${patOf(d).join(' · ')}</div>`:''}<div class="pst">Vida <b class="num">${Math.round(d.hp*sm)}</b> · Dano <b class="num">${Math.round(d.atk*sm)}</b> · Alcance <b class="num">${d.rng}</b></div><div class="psp"><span class="s-${d.s}">${SP[d.sp][0]}:</span> ${spellTxt(d,sm)}</div></div></div>`;
 }
 function defPrev(){
  const x=sel&&getSlot(S,sel);
@@ -2203,16 +2244,84 @@ function banner(s){
  const b=document.createElement('div');b.className='bannerx';b.textContent=s;w.appendChild(b);
  if(b.animate)b.animate([{opacity:0},{opacity:1,offset:.2},{opacity:1,offset:.7},{opacity:0}],{duration:1400}).onfinish=()=>b.remove();else setTimeout(()=>b.remove(),1400);
 }
+/* ===== Fundo estrelado e efeitos de combate ===== */
+const RM=()=>matchMedia('(prefers-reduced-motion:reduce)').matches;
+let SKY=null;
+function startSky(){
+ const cv=$('#sky');if(!cv)return;
+ if(SKY&&SKY.cv===cv)return;
+ const ctx=cv.getContext('2d');let W=0,H=0,dpr=Math.min(devicePixelRatio||1,1.5);
+ const R=(a,b)=>a+Math.random()*(b-a);
+ const stars=Array.from({length:150},()=>({x:Math.random(),y:Math.random(),r:R(.4,1.5),l:Math.floor(R(0,3)),ph:R(0,6.28),sp:R(.6,2.2)}));
+ const clouds=[{x:.2,y:.3,r:.5,c:'90,70,160',sp:.004},{x:.75,y:.7,r:.55,c:'40,80,150',sp:-.003},{x:.5,y:.1,r:.4,c:'120,60,130',sp:.002}];
+ let comet=null,nextComet=performance.now()+R(5000,9000),last=0;
+ const S_={cv,stop:false};SKY=S_;
+ function size(){const r=cv.getBoundingClientRect();W=Math.max(1,r.width);H=Math.max(1,r.height);cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+ size();new ResizeObserver(size).observe(cv);
+ function frame(now){
+  if(S_.stop||!document.body.contains(cv)){if(SKY===S_)SKY=null;return}
+  requestAnimationFrame(frame);
+  if(now-last<33||document.hidden)return;
+  const dt=Math.min(.1,(now-last)/1000);last=now;const t=now/1000;
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#060a1a');g.addColorStop(.6,'#0d1030');g.addColorStop(1,'#1a1233');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  for(const c of clouds){c.x+=c.sp*dt;if(c.x>1.4)c.x=-.4;if(c.x<-.4)c.x=1.4;
+   const rg=ctx.createRadialGradient(c.x*W,c.y*H,0,c.x*W,c.y*H,c.r*W);rg.addColorStop(0,`rgba(${c.c},.16)`);rg.addColorStop(1,`rgba(${c.c},0)`);ctx.fillStyle=rg;ctx.fillRect(0,0,W,H)}
+  for(const s of stars){
+   const v=[2,5,10][s.l];s.x+=v*dt/W;if(s.x>1)s.x-=1;
+   const a=.45+.45*Math.sin(t*s.sp+s.ph);
+   ctx.globalAlpha=Math.max(.1,a)*(.6+s.l*.2);ctx.fillStyle=s.l===2?'#fff3d0':'#cfd9ff';
+   ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r*(.7+s.l*.3),0,6.283);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+  // lua
+  const mx=W*.68,my=H*.17,mr=Math.min(W,H*2.1)*.045,pulse=1+.05*Math.sin(t*.6);
+  let hg=ctx.createRadialGradient(mx,my,mr*.8,mx,my,mr*5*pulse);hg.addColorStop(0,'rgba(220,230,255,.28)');hg.addColorStop(1,'rgba(220,230,255,0)');
+  ctx.fillStyle=hg;ctx.fillRect(mx-mr*6,my-mr*6,mr*12,mr*12);
+  const mg=ctx.createRadialGradient(mx-mr*.3,my-mr*.3,mr*.1,mx,my,mr);mg.addColorStop(0,'#fbfdff');mg.addColorStop(1,'#c7d3ea');
+  ctx.fillStyle=mg;ctx.beginPath();ctx.arc(mx,my,mr,0,6.283);ctx.fill();
+  ctx.fillStyle='rgba(120,135,170,.28)';for(const [dx,dy,rr] of [[-.3,-.1,.22],[.25,.2,.28],[.05,-.4,.14],[-.1,.35,.12]]){ctx.beginPath();ctx.arc(mx+dx*mr,my+dy*mr,rr*mr,0,6.283);ctx.fill()}
+  // cometa
+  if(!comet&&now>nextComet&&!RM()){const ang=R(.3,.6);comet={x:R(.1,.7)*W,y:-10,vx:Math.cos(ang)*R(380,520),vy:Math.sin(ang)*R(380,520),life:0};nextComet=now+R(14000,26000)}
+  if(comet){comet.life+=dt;comet.x+=comet.vx*dt;comet.y+=comet.vy*dt;
+   const len=90,nx=comet.vx,ny=comet.vy,n=Math.hypot(nx,ny),tx=comet.x-nx/n*len,ty=comet.y-ny/n*len;
+   const lg=ctx.createLinearGradient(comet.x,comet.y,tx,ty);lg.addColorStop(0,'rgba(255,255,255,.9)');lg.addColorStop(1,'rgba(150,180,255,0)');
+   ctx.strokeStyle=lg;ctx.lineWidth=2;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(comet.x,comet.y);ctx.lineTo(tx,ty);ctx.stroke();
+   ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(comet.x,comet.y,1.8,0,6.283);ctx.fill();
+   if(comet.x>W+50||comet.y>H+50)comet=null}
+ }
+ requestAnimationFrame(frame);
+}
+const SUITCOL={W:'#ff6a4a',C:'#5aa2ff',S:'#f4f1ea',P:'#5fd070'};
+function cpos(u){const f=FLIP&&sim,x=f?COLS-1-u.x:u.x,y=f?ROWS-1-u.y:u.y;return[x*100/COLS+50/COLS,y*100/ROWS+50/ROWS]}
+function fxAdd(el,ms){const l=$('#fxl');if(!l||l.childElementCount>70)return false;l.appendChild(el);setTimeout(()=>el.remove(),ms+60);return true}
+function fxFly(a,b,cls,color,ms){
+ if(RM())return;
+ const [ax,ay]=cpos(a),[bx,by]=cpos(b),el=document.createElement('i');el.className='fxo '+cls;el.style.background=color;el.style.boxShadow='0 0 8px 2px '+color;
+ el.style.left=ax+'%';el.style.top=ay+'%';
+ if(!fxAdd(el,ms)||!el.animate)return;
+ const ang=Math.atan2((by-ay)*ROWS/COLS*0+(by-ay)*1,(bx-ax)*2.5);
+ el.animate([{left:ax+'%',top:ay+'%',opacity:.2,transform:'translate(-50%,-50%) scale(.6)'},{opacity:1,offset:.2},{left:bx+'%',top:by+'%',opacity:.9,transform:'translate(-50%,-50%) scale(1)'}],{duration:ms,easing:'ease-in'}).onfinish=()=>el.remove();
+}
+function fxClash(a,b){
+ if(RM())return;
+ const [ax,ay]=cpos(a),[bx,by]=cpos(b),mx=(ax+bx)/2,my=(ay+by)/2,el=document.createElement('div');el.className='fxo clash';
+ el.style.left=mx+'%';el.style.top=my+'%';
+ el.innerHTML='<svg viewBox="0 0 40 40"><g stroke="#f3e7c6" stroke-width="2.4" stroke-linecap="round" fill="none"><path d="M8 32 L30 10"/><path d="M32 32 L10 10"/><path d="M6 34 L10 30 M34 34 L30 30" stroke="#c9a24a"/></g></svg>';
+ if(!fxAdd(el,260)||!el.animate)return;
+ el.animate([{opacity:0,transform:'translate(-50%,-50%) scale(.4) rotate(-20deg)'},{opacity:1,offset:.35,transform:'translate(-50%,-50%) scale(1.05) rotate(0)'},{opacity:0,transform:'translate(-50%,-50%) scale(1.25) rotate(8deg)'}],{duration:260}).onfinish=()=>el.remove();
+}
 function consume(){
  const by=id=>sim.units.find(u=>u.uid===id);
  for(const e of sim.ev){
   if(e.k==='dmg'){const u=by(e.u);if(u){floatAt(u,e.v,e.c?'c':'d');const el=els.get(u.uid);if(el){el.classList.add('hit');setTimeout(()=>el.classList.remove('hit'),140)}}}
-  else if(e.k==='heal'){const u=by(e.u);if(u&&e.v>=1)floatAt(u,'+'+Math.round(e.v),'h')}
+  else if(e.k==='heal'){const u=by(e.u);if(u&&e.v>=1){floatAt(u,'+'+Math.round(e.v),'h');const hs=e.f!=null&&e.f!==e.u?by(e.f):null;if(hs)fxFly(hs,u,'heal','#5dff8a',420);const el=els.get(u.uid);if(el&&el.animate&&!RM())el.animate([{filter:'brightness(1)'},{filter:'brightness(1.6) drop-shadow(0 0 6px #5dff8a)'},{filter:'brightness(1)'}],{duration:450})}}
   else if(e.k==='cast'||e.k==='txt'){const u=by(e.u);if(u)floatAt(u,e.s,'t')}
   else if(e.k==='banner')banner(e.s);
   else if(e.k==='dark')$('#veil').classList.toggle('on',e.on);
   else if(e.k==='atk'){
    const a=by(e.a),b=by(e.b),el=a&&els.get(a.uid);
+   if(a&&b){if(sim.effRange(a)>1)fxFly(a,b,'prj',SUITCOL[a.s||(UB[a.id]&&UB[a.id].s)]||'#fff',260);else fxClash(a,b)}
    if(el&&b&&el.animate&&!matchMedia('(prefers-reduced-motion:reduce)').matches){
     const fl=FLIP?-1:1,dx=Math.sign(b.x-a.x)*20*fl,dy=Math.sign(b.y-a.y)*20*fl;
     el.querySelector('.in').animate([{transform:'translate(0,0)'},{transform:`translate(${dx}%,${dy}%)`},{transform:'translate(0,0)'}],{duration:180});
@@ -2399,4 +2508,3 @@ musBtn();
 window.__TA={get S(){return S},get sim(){return sim}};
 showTitle();
 </script>
-</head><body></body></html>
