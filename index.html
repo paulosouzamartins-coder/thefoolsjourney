@@ -1,4 +1,5 @@
 <!doctype html>
+<meta charset="utf-8">
 <title>Torre dos Arcanos</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&display=swap">
@@ -313,6 +314,42 @@ h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;letter-spacing:.05e
 .u[data-star="2"] .in{filter:drop-shadow(0 0 3px rgba(255,215,120,.6))}
 .u[data-star="3"] .in{animation:aura3 2.2s ease-in-out infinite}
 @keyframes aura3{0%,100%{filter:drop-shadow(0 0 3px rgba(255,205,90,.7))}50%{filter:drop-shadow(0 0 9px rgba(255,225,130,1)) brightness(1.08)}}
+
+/* ===== Cidade (menu principal) ===== */
+.cityscr{position:fixed;inset:0;z-index:5;background:#0b0707;overflow:hidden;container-type:inline-size}
+.city{position:absolute;left:50%;top:50%;width:max(100vw,calc(100svh*16/9));aspect-ratio:16/9;transform:translate(-50%,-50%);overflow:hidden;container-type:inline-size;background:radial-gradient(120% 90% at 50% 20%,#4a2a1c,#1c0b0c 70%);user-select:none}
+.cwrap{position:absolute;inset:0;transition:transform .12s linear;will-change:transform}
+.cbg,.cimg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.cimg{object-fit:cover}
+.city::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:9;background:radial-gradient(130% 110% at 50% 45%,transparent 55%,rgba(20,6,8,.55)),linear-gradient(180deg,rgba(60,15,20,.0) 70%,rgba(30,8,10,.35));mix-blend-mode:multiply}
+.cfx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+.spot{display:contents;background:none;border:0;padding:0;color:inherit;cursor:pointer}
+.spot .hit{position:absolute;z-index:4;transition:opacity .4s;opacity:0;background:radial-gradient(ellipse closest-side at 50% 55%,rgba(255,216,128,.42),rgba(255,196,96,.2) 40%,rgba(255,180,70,.06) 72%,rgba(255,180,70,0) 100%);-webkit-tap-highlight-color:transparent}
+.spot:hover .hit,.spot:focus-visible .hit{opacity:1}
+.plate{position:absolute;z-index:7;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:.15em;padding:.55cqw 1.7cqw .6cqw;min-width:9cqw;text-align:center;background:linear-gradient(180deg,rgba(70,16,24,.93),rgba(34,8,12,.95));border:1px solid rgba(214,174,86,.85);border-radius:.5cqw;box-shadow:inset 0 0 0 .22cqw rgba(12,4,6,.9),inset 0 0 0 .3cqw rgba(214,174,86,.35),0 .5cqw 1.6cqw rgba(0,0,0,.6);color:#f3e2bd;transition:transform .25s cubic-bezier(.2,1.2,.4,1),background .25s,color .25s,box-shadow .25s,opacity .25s;white-space:nowrap}
+.plate::before,.plate::after{content:"◆";position:absolute;top:50%;transform:translateY(-50%);font-size:.5cqw;color:rgba(214,174,86,.9)}
+.plate::before{left:.6cqw}.plate::after{right:.6cqw}
+.plate b{font-family:var(--display);font-weight:700;font-size:1.45cqw;letter-spacing:.14em;text-transform:uppercase;line-height:1.15;text-shadow:0 1px 3px #000}
+.plate small{font-family:var(--body);font-size:1cqw;letter-spacing:.03em;color:rgba(243,226,189,.72);max-height:0;opacity:0;overflow:hidden;transition:max-height .25s,opacity .25s}
+.spot:hover .plate,.spot:focus-visible .plate{transform:translate(-50%,-50%) scale(1.1);background:linear-gradient(180deg,#f6dc8e,#c9962f 60%,#a8791f);color:#2a1408;box-shadow:inset 0 0 0 .22cqw rgba(110,66,10,.7),inset 0 0 0 .3cqw rgba(255,244,200,.55),0 0 2.4cqw rgba(255,206,100,.75),0 .6cqw 1.8cqw rgba(0,0,0,.55);z-index:8}
+.spot:hover .plate b,.spot:focus-visible .plate b{text-shadow:0 1px 0 rgba(255,244,200,.6)}
+.spot:hover .plate small,.spot:focus-visible .plate small{max-height:2.4em;opacity:1;color:#4a2a10}
+.spot:hover .plate::before,.spot:hover .plate::after{color:#5a3410}
+.city:has(.spot:hover) .spot:not(:hover) .plate{opacity:.72}
+.spot.soon .plate{filter:saturate(.55) brightness(.9)}
+.cclouds{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.cl{position:absolute;left:0;aspect-ratio:2.6/1;opacity:var(--o,.35);filter:blur(5px);will-change:transform;
+ background:radial-gradient(ellipse 34% 52% at 24% 62%,rgba(255,232,206,.85),transparent 72%),radial-gradient(ellipse 30% 58% at 50% 44%,rgba(255,240,222,.9),transparent 72%),radial-gradient(ellipse 28% 48% at 76% 60%,rgba(240,205,180,.8),transparent 72%),radial-gradient(ellipse 45% 30% at 50% 78%,rgba(222,178,160,.55),transparent 75%);animation:cdrift linear infinite}
+.cl[style*="--k:1"]{filter:blur(7px);background-size:110% 120%}
+.cl[style*="--k:2"]{filter:blur(4px);opacity:calc(var(--o) * .8)}
+@keyframes cdrift{from{transform:translateX(-110%)}to{transform:translateX(calc(100cqw + 10%))}}
+.cityhud{position:absolute;left:max(58px,3.6cqw);bottom:1.2cqw;z-index:10;width:15.5cqw;min-width:210px}
+.cityhud .hud{width:100%;padding:.55cqw .8cqw;gap:.8cqw;margin:0;background:linear-gradient(160deg,rgba(60,14,22,.92),rgba(24,7,10,.94))}
+.cityhud .hn b{font-size:max(12px,.95cqw)}.cityhud .small{font-size:max(10px,.7cqw)}
+.cityhud .bar{font-size:max(10px,.7cqw)}
+.cityhud .face,.cityhud .art{width:3.6cqw;min-width:48px}
+.btn.cback{position:absolute;right:max(58px,4cqw);top:1.4cqw;z-index:10;font-size:.9cqw;padding:.6cqw 1.5cqw;background:rgba(30,8,12,.88);color:#f0dcae;border-color:rgba(214,174,86,.6)}
+@media(prefers-reduced-motion:reduce){.cl{animation:none;transform:translateX(20cqw)}.cwrap{transition:none}}
 
 .tile.rvl{animation:tileFlip .5s cubic-bezier(.2,.9,.3,1.1) var(--d,0ms) backwards}
 @keyframes tileFlip{0%{opacity:0;transform:perspective(520px) rotateY(88deg) translateY(-8px) scale(.9);filter:brightness(2)}55%{opacity:1;transform:perspective(520px) rotateY(-10deg) scale(1.04);filter:brightness(1.35)}100%{transform:none;filter:none}}
@@ -1582,20 +1619,59 @@ function hudHTML(){
   <div class="bar ol" title="Andar mais alto alcançado"><i style="width:${META.best/TOTAL*100}%"></i><span><em>Recorde</em><em>${META.best}/${TOTAL}</em></span></div>
  </div></div>`;
 }
+const CITY=[
+ {a:'tower',n:'Torre dos Arcanos',l:39,t:0,w:20,h:47,px:51.2,py:34},
+ {a:'mystic',n:'Coliseum',l:69,t:17,w:23,h:28,px:78.8,py:45},
+ {a:'dev',n:'Laboratório',l:10.5,t:15,w:15.5,h:20,px:16.7,py:36},
+ {a:'album',n:'Baralho',l:9,t:44,w:16,h:28,px:15.5,py:73},
+ {a:'shop',n:'Loja',l:36,t:58,w:26,h:28,px:51.3,py:75,soon:1},
+ {a:'codex',n:'Códex dos Arcanos',l:72,t:55,w:20,h:28,px:81.6,py:78}
+];
+function citySub(a){return{tower:S?'Continuar · andar '+(S.g+1)+' de '+TOTAL:'Começar uma nova subida',mystic:'Duelo entre jogadores',dev:'Teste de combates · custo zero',album:'Seus Arcanos Maiores',shop:'Em breve',codex:'Conheça os Arcanos'}[a]}
 function showLobby(){
  stopTimer();closeModal();
- $('#app').innerHTML=`<div class="lobby">
-  <div class="lbmain"><h1>Torre dos <em>Arcanos</em></h1>
-   <div class="lbmenu frame">
-    <button class="btn big" data-a="tower">Torre dos Arcanos<small>${S?'Continuar a subida · andar '+(S.g+1)+' de '+TOTAL:'Começar uma nova subida'}</small></button>
-    <button class="btn" data-a="album">Baralho<small>Seus Arcanos Maiores coletados</small></button>
-    <button class="btn soon" data-a="shop">Loja<small>A implementar</small></button>
-    <button class="btn" data-a="codex">Códex dos Arcanos</button>
-    <button class="btn" data-a="mystic">Torre Mística<small>Duelo entre jogadores</small></button>
-    <button class="btn" data-a="dev">Modo Desenvolvedor<small>Teste de combates · custo zero</small></button>
-    <button class="btn ghost" data-a="title">Menu inicial</button>
-   </div></div>
-  ${hudHTML()}</div>`;
+ const clouds=Array.from({length:9},(_,i)=>{const w=38+(i*13)%34,top=(i*23)%78,dur=110+(i*37)%90,dl=-(i*(dur/9)),op=.3+((i*7)%4)*.07;return`<i class="cl" style="width:${w}%;top:${top}%;animation-duration:${dur}s;animation-delay:${dl}s;--o:${op};--k:${i%3}"></i>`}).join('');
+ $('#app').innerHTML=`<div class="cityscr"><div class="city" id="city">
+  <div class="cwrap" id="cwrap"><div class="cbg"><img class="cimg" src="assets/cidade.png" alt="" draggable="false" onerror="this.style.display='none'"></div></div>
+  <canvas class="cfx" id="cfx"></canvas>
+  ${CITY.map(p=>`<button class="spot${p.soon?' soon':''}" data-a="${p.a}" aria-label="${esc(p.n)}"><span class="hit" style="left:${p.l}%;top:${p.t}%;width:${p.w}%;height:${p.h}%"></span><span class="plate" style="left:${p.px}%;top:${p.py}%"><b>${p.n}</b><small>${citySub(p.a)}</small></span></button>`).join('')}
+  <div class="cclouds">${clouds}</div>
+  </div>
+ <div class="cityhud">${hudHTML()}</div>
+ <button class="btn ghost cback" data-a="title">Menu inicial</button>
+ </div>`;
+ startCityFx();
+}
+function startCityFx(){
+ const cv=$('#cfx'),city=$('#city'),cw=$('#cwrap');if(!cv)return;
+ const ctx=cv.getContext('2d'),dpr=Math.min(devicePixelRatio||1,1.5);let W=1,H=1;
+ const R=(a,b)=>a+Math.random()*(b-a);
+ const hot=CITY.map(p=>[(p.l+p.w/2)/100,(p.t+p.h*.7)/100]);
+ const mk=()=>{const near=Math.random()<.4,h=hot[Math.floor(Math.random()*hot.length)];return{x:near?h[0]+R(-.07,.07):Math.random(),y:near?h[1]+R(-.08,.08):Math.random(),r:R(.6,2.2),vy:R(.004,.016),sw:R(.3,1),ph:R(0,6.28),tw:R(.8,2.6),life:R(0,1)}};
+ const P=Array.from({length:90},mk);
+ function size(){const r=cv.getBoundingClientRect();W=Math.max(1,r.width);H=Math.max(1,r.height);cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+ size();new ResizeObserver(size).observe(cv);
+ let mx=0,my=0,cx=0,cy=0,last=0,alive=true;
+ if(!RM())city.addEventListener('pointermove',e=>{const r=city.getBoundingClientRect();mx=(e.clientX-r.left)/r.width-.5;my=(e.clientY-r.top)/r.height-.5});
+ function frame(now){
+  if(!alive||!document.body.contains(cv))return;
+  requestAnimationFrame(frame);
+  if(document.hidden||now-last<33)return;
+  const dt=Math.min(.1,(now-last)/1000);last=now;const t=now/1000;
+  cx+=(mx-cx)*.06;cy+=(my-cy)*.06;
+  if(!RM()){cw.style.transform=`translate(${(-cx*14).toFixed(2)}px,${(-cy*9).toFixed(2)}px) scale(1.025)`;city.style.setProperty('--px',(cx*-26).toFixed(1)+'px')}
+  ctx.clearRect(0,0,W,H);ctx.globalCompositeOperation='lighter';
+  for(const p of P){
+   p.y-=p.vy*dt*(RM()?0:1);p.x+=Math.sin(t*p.sw+p.ph)*.0004;p.life+=dt/ (6+p.tw*3);
+   if(p.y<-.03||p.life>1){Object.assign(p,mk());p.y=Math.min(1.02,p.y+ .05);p.life=0}
+   const a=Math.sin(Math.min(1,p.life)*Math.PI)*(.55+.45*Math.sin(t*p.tw+p.ph));if(a<=.02)continue;
+   const x=p.x*W,y=p.y*H,rr=p.r*(W/1100+.5);
+   const g=ctx.createRadialGradient(x,y,0,x,y,rr*4);g.addColorStop(0,`rgba(255,226,140,${a*.95})`);g.addColorStop(.35,`rgba(255,190,80,${a*.35})`);g.addColorStop(1,'rgba(255,170,60,0)');
+   ctx.fillStyle=g;ctx.fillRect(x-rr*4,y-rr*4,rr*8,rr*8);
+  }
+  ctx.globalCompositeOperation='source-over';
+ }
+ requestAnimationFrame(frame);
 }
 /* ===== Cutscene de abertura (primeira vez na Torre) ===== */
 const CUT=[
@@ -1668,7 +1744,7 @@ function cutscene(done){
  requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.transition='opacity 2.2s ease-out';f.style.opacity=0}));
  setTimeout(()=>{box.classList.add('show');st.ready=true;next()},2300);
 }
-/* ===== Torre Mística (PvP P2P via PeerJS) ===== */
+/* ===== Coliseum (PvP P2P via PeerJS) ===== */
 const PVALL=()=>Object.keys(MJ).filter(k=>k!=='fool'&&hasFx(k));
 let PV=null,PVSEL=[],PVROOM='',PVSTORY=null;
 const PVBROKER='https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js';
@@ -1683,7 +1759,7 @@ function showMystic(){
  stopTimer();closeModal();pvpClose();
  const have=PVALL(),mx=EQUIPMAX;
  PVSEL=PVSEL.filter(k=>have.includes(k));
- $('#app').innerHTML=`<div class="mystic frame"><h2>Torre Mística</h2>
+ $('#app').innerHTML=`<div class="mystic frame"><h2>Coliseum</h2>
   <p class="sub">Duelo entre dois jogadores. Todos os Arcanos estão liberados para os dois jogadores. Escolha até ${mx}: só o bônus passivo de cada um vale na partida.</p>
   <div class="mgrid">${have.map(k=>`<button class="mcard ${PVSEL.includes(k)?'on':''}" data-a="mpick:${k}">${majorArt(k)}<b>${MJ[k].pt}</b><small>${MJ[k].pd||''}</small></button>`).join('')||'<p class="sub">Nenhum Arcano disponível.</p>'}</div>
   <div class="mrow"><label>Número da sala <input id="mroom" inputmode="numeric" maxlength="8" placeholder="ex.: 4821" value="${PVROOM}"></label>
@@ -1843,13 +1919,13 @@ function pvpEnd(win,msg){
  if(!S||!S.pvp||S.phase==='done')return;
  stopTimer();RNGF=Math.random;S.phase='done';
  modal(`<h2>${win?'Vitória':'Derrota'}</h2><p class="sub" style="text-align:center">${msg?esc(msg)+' ':''}Karma final · você ${S.karma.me}/${KARMA} · oponente ${S.karma.foe}/${KARMA}</p>
- <div style="text-align:center"><button class="btn big" data-a="mback">Voltar à Torre Mística</button></div>`);
+ <div style="text-align:center"><button class="btn big" data-a="mback">Voltar ao Coliseum</button></div>`);
 }
 function pvpConcede(){
  if(PV&&PV.conn&&PV.conn.open)try{PV.conn.send({t:'ff'})}catch(e){}
  closeModal();pvpEnd(false,'Você desistiu.');
 }
-/* ===== Modo Desenvolvedor ===== */
+/* ===== Laboratório ===== */
 let DV=null;
 function devState(){
  const P=newState({ups:{gold:0,shop:0,rr:0,start:0}});
@@ -1883,7 +1959,7 @@ function devPanels(){
  const pb=$('#prevbox');if(pb){pb.innerHTML=DV.pick?prevHTML(DV.pick,DV.star):'<div class="pvempty">✦</div>';fitPrev()}
  const m=$('#menu');
  if(sim){m.innerHTML=`<h3>Em combate</h3><button class="btn" data-a="dvstop">Parar e voltar à edição</button><div class="dvres">${DV.res}</div>`;return}
- m.innerHTML=`<h3>Modo Desenvolvedor</h3>
+ m.innerHTML=`<h3>Laboratório</h3>
  <button class="btn big" data-a="dvfight">Lutar</button>
  <div class="btns"><button class="btn" data-a="dvbatch:100">Simular 100×</button><button class="btn" data-a="dvbatch:500">500×</button></div>
  <div class="btns"><button class="btn" data-a="dvclear:b">Limpar baixo</button><button class="btn" data-a="dvclear:c">Limpar cima</button></div>
@@ -2086,8 +2162,8 @@ function embateText(n){
 }
 function syncAll(){if(S&&S.pvp)pvpPoolSync();calcFlags();updateKarma();renderHead();renderBench();renderShop();renderSyn();renderMenu();renderPrev();if(!sim)drawPrepUnits();updateCells()}
 function renderHead(){
-  if(S.dev){const g=$('#gh');if(g)g.innerHTML='<b>Modo Desenvolvedor</b>';return}
- if(S.pvp){const g=$('#gh');if(g)g.innerHTML='<b>Torre Mística · Embate '+S.embate+'</b>';return}
+  if(S.dev){const g=$('#gh');if(g)g.innerHTML='<b>Laboratório</b>';return}
+ if(S.pvp){const g=$('#gh');if(g)g.innerHTML='<b>Coliseum · Embate '+S.embate+'</b>';return}
  const fi=FLOORS[S.fl],a=ACTS[fi.act];
  $('#gh').innerHTML=`<b>${a.n} · ${a.t} · Duelo ${fi.st+1}/${a.duels.length} · Embate ${S.embate}</b>
  <div class="stk"><span>O Louco vs <b>${MJ[S.opp].pt}</b></span><span>Prêmio: <b>${MJ[S.wager.prize].pt}</b></span><span>Aposta: <b>${MJ[S.wager.bet].pt}</b></span>
