@@ -907,8 +907,14 @@ html{font-size:clamp(18px,1.1vw,24px)}
 .volp input[type=range]{grid-column:1/-1;width:100%;accent-color:#c9a24a}
 .volp button{border:1px solid var(--gold-d);background:#2a0710;color:var(--gold);padding:5px;cursor:pointer;font-size:.75rem;border-radius:3px}
 
-.zfx{position:absolute;z-index:30;pointer-events:none;font-size:2.3cqw;line-height:1;color:#fff;text-shadow:0 0 5px #fff,0 0 10px #ffd978,0 0 20px #e0b030,0 0 30px rgba(255,200,80,.8);opacity:0;transform:translate(-50%,0);animation:zfxup 1.3s ease-out forwards}
-@keyframes zfxup{0%{opacity:0;transform:translate(-50%,0) scale(.5)}18%{opacity:1;transform:translate(-50%,-.8cqw) scale(1)}70%{opacity:.95}100%{opacity:0;transform:translate(-50%,-5.5cqw) scale(1.2)}}
+.zfx{position:absolute;z-index:30;pointer-events:none;font-size:2.3cqw;line-height:1;color:rgba(255,255,255,.88);text-shadow:0 0 4px rgba(255,255,255,.95),0 0 10px rgba(255,255,255,.55),0 0 18px rgba(255,228,160,.22);opacity:0;transform:translate(-50%,0);animation:zfxup 1.5s ease-in-out forwards}
+@keyframes zfxup{
+ 0%{opacity:0;transform:translate(-50%,0) scale(.5) rotate(0)}
+ 14%{opacity:.85;transform:translate(calc(-50% + 1cqw*var(--d)),-1cqw) scale(.95) rotate(calc(14deg*var(--d)))}
+ 34%{transform:translate(calc(-50% - 1.2cqw*var(--d)),-2.4cqw) scale(1) rotate(calc(-14deg*var(--d)))}
+ 54%{opacity:.8;transform:translate(calc(-50% + 1.1cqw*var(--d)),-3.7cqw) scale(1.05) rotate(calc(12deg*var(--d)))}
+ 76%{opacity:.5;transform:translate(calc(-50% - .8cqw*var(--d)),-4.9cqw) scale(1.08) rotate(calc(-10deg*var(--d)))}
+ 100%{opacity:0;transform:translate(-50%,-6.2cqw) scale(1.1) rotate(0)}}
 </style>
 
 <div class="wrap" id="app"></div>
@@ -2766,7 +2772,7 @@ function signFx(k,idxs){
   const cx=((i%COLS)+.5)*100/COLS,cy=(PROW+Math.floor(i/COLS)+.5)*100/ROWS;
   for(let j=0;j<3;j++){
    const el=document.createElement('i');el.className='zfx';el.textContent=g;
-   el.style.left=(cx+(j-1)*1.7)+'%';el.style.top=(cy+2.5)+'%';el.style.animationDelay=(j*.22)+'s';
+   el.style.left=(cx+(j-1)*1.7)+'%';el.style.setProperty('--d',j%2?-1:1);el.style.top=(cy+2.5)+'%';el.style.animationDelay=(j*.22)+'s';
    fxAdd(el,1500+j*220);
   }
  });
